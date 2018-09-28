@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib
-matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from scipy import interpolate
 import re
 from math import log
 from math import e
@@ -50,18 +50,162 @@ def plot_phase_shift():
     raw_data_1 = np.zeros((scattering_data_num,4),dtype = np.float)
     input_residual_data(file_path,raw_data_1)
     fig_1 = plt.figure('fig_1')
-    ## pp 1s0
-#    plt.subplot(421)
+    plt.subplots_adjust(wspace =0.5, hspace =0)
+
+
+    ## pp 1S0
+    matplotlib.rcParams['xtick.direction'] = 'in' 
+    matplotlib.rcParams['ytick.direction'] = 'in' 
+    plt.subplot(421)
+    plt.tick_params(top=True,bottom=True,left=True,right=False)
     start_line = 0
     x_list     = raw_data_1[start_line:start_line+8,3]  # energy
     y_list_1   = raw_data_1[start_line:start_line+8,1]  # exp
     y_list_2   = raw_data_1[start_line:start_line+8,0]  # theo
-    l_exp      = plt.scatter(x_list,y_list_1,color = 'k',s = 15,marker ='.')
-    l_theo     = plt.plot   (x_list,y_list_2,color = 'b',linestyle = '--') 
-    plt.ylabel('$/delta(^1S_0)$(deg)')
+    x_list_new = np.linspace(np.min(x_list),np.max(x_list),num=plot_interpol_count)
+    func       = interpolate.interp1d(x_list,y_list_2,kind='quadratic')
+    y_list_2_new = func(x_list_new) 
 
-    plot_path = './plot_output/pp_phase_shift.eps'
+    l_exp      = plt.scatter(x_list,y_list_1,color = 'k',s = point_size,marker ='.')
+    l_theo     = plt.plot   (x_list_new,y_list_2_new,color = 'b',linestyle = '-') 
+    
+    #plt.xlabel(fontsize = x_fontsize)
+    plt.ylabel('$\delta(^1S_0)$(deg)')
+    plt.yticks(np.arange(-30,91,30),fontsize = y_fontsize)
+    plt.xticks(np.arange(0,225,50),[])
+
+    ## pp 3P0
+    matplotlib.rcParams['xtick.direction'] = 'in' 
+    matplotlib.rcParams['ytick.direction'] = 'in' 
+    plt.subplot(422)
+    plt.tick_params(top=True,bottom=True,left=True,right=False)
+    start_line = 24
+    x_list     = raw_data_1[start_line:start_line+8,3]  # energy
+    y_list_1   = raw_data_1[start_line:start_line+8,1]  # exp
+    y_list_2   = raw_data_1[start_line:start_line+8,0]  # theo
+    x_list_new = np.linspace(np.min(x_list),np.max(x_list),num=plot_interpol_count)
+    func       = interpolate.interp1d(x_list,y_list_2,kind='quadratic')
+    y_list_2_new = func(x_list_new) 
+
+    l_exp      = plt.scatter(x_list,y_list_1,color = 'k',s = point_size,marker ='.')
+    l_theo     = plt.plot   (x_list_new,y_list_2_new,color = 'b',linestyle = '-') 
+
+    plt.ylabel('$\delta(^3P_0)$(deg)')
+    plt.yticks(np.arange(-40,81,40),fontsize = y_fontsize)
+    plt.xticks(np.arange(0,225,50),[])
+
+
+    ## pp 3P1
+    matplotlib.rcParams['xtick.direction'] = 'in' 
+    matplotlib.rcParams['ytick.direction'] = 'in' 
+    plt.subplot(423)
+    plt.tick_params(top=True,bottom=True,left=True,right=False)
+    start_line = 32
+    x_list     = raw_data_1[start_line:start_line+8,3]  # energy
+    y_list_1   = raw_data_1[start_line:start_line+8,1]  # exp
+    y_list_2   = raw_data_1[start_line:start_line+8,0]  # theo
+    x_list_new = np.linspace(np.min(x_list),np.max(x_list),num=plot_interpol_count)
+    func       = interpolate.interp1d(x_list,y_list_2,kind='quadratic')
+    y_list_2_new = func(x_list_new) 
+
+    l_exp      = plt.scatter(x_list,y_list_1,color = 'k',s = point_size,marker ='.')
+    l_theo     = plt.plot   (x_list_new,y_list_2_new,color = 'b',linestyle = '-') 
+
+    plt.ylabel('$\delta(^3P_1)$(deg)')
+    plt.yticks(np.arange(-60,21,20),fontsize = y_fontsize)
+    plt.xticks(np.arange(0,225,50),[])
+
+    ## pp 3P2
+    matplotlib.rcParams['xtick.direction'] = 'in' 
+    matplotlib.rcParams['ytick.direction'] = 'in' 
+    plt.subplot(424)
+    plt.tick_params(top=True,bottom=True,left=True,right=False)
+    start_line = 48
+    x_list     = raw_data_1[start_line:start_line+8,3]  # energy
+    y_list_1   = raw_data_1[start_line:start_line+8,1]  # exp
+    y_list_2   = raw_data_1[start_line:start_line+8,0]  # theo
+    x_list_new = np.linspace(np.min(x_list),np.max(x_list),num=plot_interpol_count)
+    func       = interpolate.interp1d(x_list,y_list_2,kind='quadratic')
+    y_list_2_new = func(x_list_new) 
+
+    l_exp      = plt.scatter(x_list,y_list_1,color = 'k',s = point_size,marker ='.')
+    l_theo     = plt.plot   (x_list_new,y_list_2_new,color = 'b',linestyle = '-') 
+
+    plt.ylabel('$\delta(^3P_2)$(deg)')
+    plt.yticks(np.arange(-6,22,6),fontsize = y_fontsize)
+    plt.xticks(np.arange(0,225,50),[])
+
+    ## pp 1D2
+    matplotlib.rcParams['xtick.direction'] = 'in' 
+    matplotlib.rcParams['ytick.direction'] = 'in' 
+    plt.subplot(425)
+    plt.tick_params(top=True,bottom=True,left=True,right=False)
+    start_line = 8
+    x_list     = raw_data_1[start_line:start_line+8,3]  # energy
+    y_list_1   = raw_data_1[start_line:start_line+8,1]  # exp
+    y_list_2   = raw_data_1[start_line:start_line+8,0]  # theo
+    x_list_new = np.linspace(np.min(x_list),np.max(x_list),num=plot_interpol_count)
+    func       = interpolate.interp1d(x_list,y_list_2,kind='quadratic')
+    y_list_2_new = func(x_list_new) 
+
+    l_exp      = plt.scatter(x_list,y_list_1,color = 'k',s = point_size,marker ='.')
+    l_theo     = plt.plot   (x_list_new,y_list_2_new,color = 'b',linestyle = '-') 
+
+    plt.ylabel('$\delta(^1D_2)$(deg)')
+    plt.yticks(np.arange(-4,13,4),fontsize = y_fontsize)
+    plt.xticks(np.arange(0,225,50),[])
+
+    ## pp 3F2
+    matplotlib.rcParams['xtick.direction'] = 'in' 
+    matplotlib.rcParams['ytick.direction'] = 'in' 
+    plt.subplot(426)
+    plt.tick_params(top=True,bottom=True,left=True,right=False)
+    start_line = 64
+    x_list     = raw_data_1[start_line:start_line+8,3]  # energy
+    y_list_1   = raw_data_1[start_line:start_line+8,1]  # exp
+    y_list_2   = raw_data_1[start_line:start_line+8,0]  # theo
+    x_list_new = np.linspace(np.min(x_list),np.max(x_list),num=plot_interpol_count)
+    func       = interpolate.interp1d(x_list,y_list_2,kind='quadratic')
+    y_list_2_new = func(x_list_new) 
+
+    l_exp      = plt.scatter(x_list,y_list_1,color = 'k',s = point_size,marker ='.')
+    l_theo     = plt.plot   (x_list_new,y_list_2_new,color = 'b',linestyle = '-') 
+
+    plt.ylabel('$\delta(^3F_2)$(deg)')
+    plt.yticks(np.arange(-0.2,2.6,0.6),fontsize = y_fontsize)
+    plt.xticks(np.arange(0,225,50),[])
+
+    ## pp 3F3
+    matplotlib.rcParams['xtick.direction'] = 'in' 
+    matplotlib.rcParams['ytick.direction'] = 'in' 
+    plt.subplot(427)
+    plt.tick_params(top=True,bottom=True,left=True,right=False)
+    start_line = 40
+    x_list     = raw_data_1[start_line:start_line+8,3]  # energy
+    y_list_1   = raw_data_1[start_line:start_line+8,1]  # exp
+    y_list_2   = raw_data_1[start_line:start_line+8,0]  # theo
+    x_list_new = np.linspace(np.min(x_list),np.max(x_list),num=plot_interpol_count)
+    func       = interpolate.interp1d(x_list,y_list_2,kind='quadratic')
+    y_list_2_new = func(x_list_new) 
+
+    l_exp      = plt.scatter(x_list,y_list_1,color = 'k',s = point_size,marker ='.')
+    l_theo     = plt.plot   (x_list_new,y_list_2_new,color = 'b',linestyle = '-') 
+
+    plt.ylabel('$\delta(^3F_3)$(deg)')
+    plt.yticks(np.arange(-4,0.5,1),fontsize = y_fontsize)
+    plt.xticks(np.arange(0,225,50),[])
+
+
+
+
+
+    plot_path = 'pp_phase_shift.eps'
     plt.savefig(plot_path)
+    plt.show()
+
+
+
+
 #    plt.close("all")
 
 
@@ -75,5 +219,9 @@ exp_line           = 7
 exp_error_line     = 9
 energy_line        = 1
 E_max              = 200
+plot_interpol_count= 1000
+point_size         = 50
+x_fontsize        = 8
+y_fontsize        = 8
 
 plot_phase_shift()
