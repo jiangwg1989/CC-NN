@@ -32,7 +32,7 @@ def input_residual_data(file_path,raw_data):
 
 
 def plot_phase_shift():
-    file_path = "./residual_data_weight10.txt"
+    file_path = "./residual_data.txt"
     with open(file_path,'r') as f:
         count = len(open(file_path,'rU').readlines())
         data = f.readlines()
@@ -201,7 +201,7 @@ def plot_phase_shift():
 
 
 
-    plot_path = 'pp_phase_shift_2.jpg'
+    plot_path = 'pp_phase_shift.jpg'
     plt.savefig(plot_path)
     plt.show()
 
