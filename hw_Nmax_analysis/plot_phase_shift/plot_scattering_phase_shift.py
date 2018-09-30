@@ -66,7 +66,8 @@ def plot_phase_shift():
     x_list_new = np.linspace(np.min(x_list),np.max(x_list),num=plot_interpol_count)
     func       = interpolate.interp1d(x_list,y_list_2,kind=kind)
     y_list_2_new = func(x_list_new) 
-
+    #print('y_list='+str(y_list_2))
+    #print('y_list_2_new='+str(y_list_2_new))
     l_exp      = plt.scatter(x_list,y_list_1,color = 'k',s = point_size,marker ='.')
     l_theo     = plt.plot   (x_list_new,y_list_2_new,color = 'b',linestyle = '-') 
     
@@ -224,5 +225,5 @@ plot_interpol_count= 1000
 point_size         = 50
 x_fontsize         = 8
 y_fontsize         = 8
-kind               = 'cubic' 
+kind               = 'linear' 
 plot_phase_shift()
