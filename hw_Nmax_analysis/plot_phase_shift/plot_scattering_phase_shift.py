@@ -32,7 +32,7 @@ def input_residual_data(file_path,raw_data):
 
 
 def plot_phase_shift():
-    file_path = "residual_data_weight10.txt"
+    file_path = "./residual_data_weight10.txt"
     with open(file_path,'r') as f:
         count = len(open(file_path,'rU').readlines())
         data = f.readlines()
@@ -64,7 +64,7 @@ def plot_phase_shift():
     y_list_1   = raw_data_1[start_line:start_line+8,1]  # exp
     y_list_2   = raw_data_1[start_line:start_line+8,0]  # theo
     x_list_new = np.linspace(np.min(x_list),np.max(x_list),num=plot_interpol_count)
-    func       = interpolate.interp1d(x_list,y_list_2,kind='quadratic')
+    func       = interpolate.interp1d(x_list,y_list_2,kind=kind)
     y_list_2_new = func(x_list_new) 
 
     l_exp      = plt.scatter(x_list,y_list_1,color = 'k',s = point_size,marker ='.')
@@ -85,7 +85,7 @@ def plot_phase_shift():
     y_list_1   = raw_data_1[start_line:start_line+8,1]  # exp
     y_list_2   = raw_data_1[start_line:start_line+8,0]  # theo
     x_list_new = np.linspace(np.min(x_list),np.max(x_list),num=plot_interpol_count)
-    func       = interpolate.interp1d(x_list,y_list_2,kind='quadratic')
+    func       = interpolate.interp1d(x_list,y_list_2,kind=kind)
     y_list_2_new = func(x_list_new) 
 
     l_exp      = plt.scatter(x_list,y_list_1,color = 'k',s = point_size,marker ='.')
@@ -106,7 +106,7 @@ def plot_phase_shift():
     y_list_1   = raw_data_1[start_line:start_line+8,1]  # exp
     y_list_2   = raw_data_1[start_line:start_line+8,0]  # theo
     x_list_new = np.linspace(np.min(x_list),np.max(x_list),num=plot_interpol_count)
-    func       = interpolate.interp1d(x_list,y_list_2,kind='quadratic')
+    func       = interpolate.interp1d(x_list,y_list_2,kind=kind)
     y_list_2_new = func(x_list_new) 
 
     l_exp      = plt.scatter(x_list,y_list_1,color = 'k',s = point_size,marker ='.')
@@ -126,7 +126,7 @@ def plot_phase_shift():
     y_list_1   = raw_data_1[start_line:start_line+8,1]  # exp
     y_list_2   = raw_data_1[start_line:start_line+8,0]  # theo
     x_list_new = np.linspace(np.min(x_list),np.max(x_list),num=plot_interpol_count)
-    func       = interpolate.interp1d(x_list,y_list_2,kind='quadratic')
+    func       = interpolate.interp1d(x_list,y_list_2,kind=kind)
     y_list_2_new = func(x_list_new) 
 
     l_exp      = plt.scatter(x_list,y_list_1,color = 'k',s = point_size,marker ='.')
@@ -146,7 +146,7 @@ def plot_phase_shift():
     y_list_1   = raw_data_1[start_line:start_line+8,1]  # exp
     y_list_2   = raw_data_1[start_line:start_line+8,0]  # theo
     x_list_new = np.linspace(np.min(x_list),np.max(x_list),num=plot_interpol_count)
-    func       = interpolate.interp1d(x_list,y_list_2,kind='quadratic')
+    func       = interpolate.interp1d(x_list,y_list_2,kind=kind)
     y_list_2_new = func(x_list_new) 
 
     l_exp      = plt.scatter(x_list,y_list_1,color = 'k',s = point_size,marker ='.')
@@ -166,7 +166,7 @@ def plot_phase_shift():
     y_list_1   = raw_data_1[start_line:start_line+8,1]  # exp
     y_list_2   = raw_data_1[start_line:start_line+8,0]  # theo
     x_list_new = np.linspace(np.min(x_list),np.max(x_list),num=plot_interpol_count)
-    func       = interpolate.interp1d(x_list,y_list_2,kind='quadratic')
+    func       = interpolate.interp1d(x_list,y_list_2,kind=kind)
     y_list_2_new = func(x_list_new) 
 
     l_exp      = plt.scatter(x_list,y_list_1,color = 'k',s = point_size,marker ='.')
@@ -186,7 +186,7 @@ def plot_phase_shift():
     y_list_1   = raw_data_1[start_line:start_line+8,1]  # exp
     y_list_2   = raw_data_1[start_line:start_line+8,0]  # theo
     x_list_new = np.linspace(np.min(x_list),np.max(x_list),num=plot_interpol_count)
-    func       = interpolate.interp1d(x_list,y_list_2,kind='quadratic')
+    func       = interpolate.interp1d(x_list,y_list_2,kind=kind)
     y_list_2_new = func(x_list_new) 
 
     l_exp      = plt.scatter(x_list,y_list_1,color = 'k',s = point_size,marker ='.')
@@ -222,7 +222,7 @@ energy_line        = 1
 E_max              = 200
 plot_interpol_count= 1000
 point_size         = 50
-x_fontsize        = 8
-y_fontsize        = 8
-
+x_fontsize         = 8
+y_fontsize         = 8
+kind               = 'cubic' 
 plot_phase_shift()
