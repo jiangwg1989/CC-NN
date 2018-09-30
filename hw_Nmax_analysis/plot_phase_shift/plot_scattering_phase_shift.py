@@ -69,7 +69,7 @@ def plot_phase_shift():
     #print('y_list='+str(y_list_2))
     #print('y_list_2_new='+str(y_list_2_new))
     l_exp      = plt.scatter(x_list,y_list_1,color = 'k',s = point_size,marker ='.')
-    l_theo     = plt.plot   (x_list_new,y_list_2_new,color = 'b',linestyle = '-') 
+    l_theo     = plt.plot   (x_list,y_list_2,color = 'b',linestyle = '-') 
     
     #plt.xlabel(fontsize = x_fontsize)
     plt.ylabel('$\delta(^1S_0)$(deg)')
