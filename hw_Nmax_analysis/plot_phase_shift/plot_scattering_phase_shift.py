@@ -201,7 +201,7 @@ def plot_phase_shift():
 
 
 
-    plot_path = 'pp_phase_shift.jpg'
+    plot_path = 'pp_phase_shift.pdf'
     plt.savefig(plot_path)
     plt.show()
 
