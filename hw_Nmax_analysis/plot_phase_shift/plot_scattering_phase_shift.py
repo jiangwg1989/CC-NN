@@ -200,7 +200,7 @@ def plot_phase_shift(file_path):
 
 
 
-    plot_path = 'pp_phase_shift.png'
+    plot_path = 'pp_phase_shift.eps'
     plt.savefig(plot_path)
     plt.show()
     plt.close("all")
@@ -355,7 +355,7 @@ def plot_phase_shift(file_path):
 
 
 
-    plot_path = 'pp_phase_shift.png'
+    plot_path = 'np_phase_shift.eps'
     plt.savefig(plot_path)
     plt.show()
     plt.close("all")
