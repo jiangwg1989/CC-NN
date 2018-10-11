@@ -37,22 +37,22 @@ subroutine chp_preset_DNNLO_450_RSe2_isoT
 
     ! LO contacts
     call chp_set_chiral_Ct_CIB(1) ! Use CIB contacts
-    call chp_set_CIB_LO_contact(1, -1, -0.33975005 ) ! Ct_1S0pp
-    call chp_set_CIB_LO_contact(2, -1, -0.26298082 ) ! Ct_3S1pp
-    call chp_set_CIB_LO_contact(1,  0, -0.34097394 ) ! Ct_1S0np
-    call chp_set_CIB_LO_contact(2,  0, -0.26298082 ) ! Ct_3S1np
-    call chp_set_CIB_LO_contact(1,  1, -0.33642287 ) ! Ct_1S0nn
-    call chp_set_CIB_LO_contact(2,  1, -0.26298082 ) ! Ct_3S1nn
+    call chp_set_CIB_LO_contact(1, -1, -0.33957799 ) ! Ct_1S0pp
+    call chp_set_CIB_LO_contact(2, -1, -0.26590577 ) ! Ct_3S1pp
+    call chp_set_CIB_LO_contact(1,  0, -0.34080293 ) ! Ct_1S0np
+    call chp_set_CIB_LO_contact(2,  0, -0.26590577 ) ! Ct_3S1np
+    call chp_set_CIB_LO_contact(1,  1, -0.33678385 ) ! Ct_1S0nn
+    call chp_set_CIB_LO_contact(2,  1, -0.26590577 ) ! Ct_3S1nn
 
     ! NLO contacts
     call chp_set_chiral_C(1) ! Use
-    call chp_set_NLO_contact(1, 2.54994443 ) ! C_1S0
-    call chp_set_NLO_contact(2, 0.67820416 ) ! C_3P0
-    call chp_set_NLO_contact(3, 0.02664667 ) ! C_1P1
-    call chp_set_NLO_contact(4, -0.92576817 ) ! C_3P1
-    call chp_set_NLO_contact(5, 1.10933762 ) ! C_3S1
-    call chp_set_NLO_contact(6, 0.43779859 ) ! C_3S1-3D1
-    call chp_set_NLO_contact(7, -0.88883706 ) ! C_3P2
+    call chp_set_NLO_contact(1, 2.54538126 ) ! C_1S0
+    call chp_set_NLO_contact(2, 0.68235563 ) ! C_3P0
+    call chp_set_NLO_contact(3, 0.03179001 ) ! C_1P1
+    call chp_set_NLO_contact(4, -0.91810582 ) ! C_3P1
+    call chp_set_NLO_contact(5, 1.13617113 ) ! C_3S1
+    call chp_set_NLO_contact(6, 0.46111177 ) ! C_3S1-3D1
+    call chp_set_NLO_contact(7, -0.88955910 ) ! C_3P2
 
     ! N3LO contacts
     call chp_set_chiral_D(0) ! Do not use
