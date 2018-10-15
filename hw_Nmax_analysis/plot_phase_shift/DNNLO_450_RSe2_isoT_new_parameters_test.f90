@@ -6,7 +6,7 @@
 !   c_D: 7.90000000000000036D-01
 !   c_E: 1.70000000000000012D-02
 
-subroutine chp_preset_DNNLO_450_RSe2_isoT
+subroutine chp_preset_DNNLO_450_RSe2_isoT_new
     use idaho_chiral_potential
 
     implicit none
@@ -37,22 +37,22 @@ subroutine chp_preset_DNNLO_450_RSe2_isoT
 
     ! LO contacts
     call chp_set_chiral_Ct_CIB(1) ! Use CIB contacts
-    call chp_set_CIB_LO_contact(1, -1, -0.33957799 ) ! Ct_1S0pp
-    call chp_set_CIB_LO_contact(2, -1, -0.26590577 ) ! Ct_3S1pp
-    call chp_set_CIB_LO_contact(1,  0, -0.34080293 ) ! Ct_1S0np
-    call chp_set_CIB_LO_contact(2,  0, -0.26590577 ) ! Ct_3S1np
-    call chp_set_CIB_LO_contact(1,  1, -0.33678385 ) ! Ct_1S0nn
-    call chp_set_CIB_LO_contact(2,  1, -0.26590577 ) ! Ct_3S1nn
+    call chp_set_CIB_LO_contact(1, -1, -0.33871610D+00 ) ! Ct_1S0pp
+    call chp_set_CIB_LO_contact(2, -1, -0.28605460D+00 ) ! Ct_3S1pp
+    call chp_set_CIB_LO_contact(1,  0, -0.33982408D+00 ) ! Ct_1S0np
+    call chp_set_CIB_LO_contact(2,  0, -0.28605460D+00 ) ! Ct_3S1np
+    call chp_set_CIB_LO_contact(1,  1, -0.33847639D+00 ) ! Ct_1S0nn
+    call chp_set_CIB_LO_contact(2,  1, -0.28605460D+00 ) ! Ct_3S1nn
 
     ! NLO contacts
     call chp_set_chiral_C(1) ! Use
-    call chp_set_NLO_contact(1, 2.54538126 ) ! C_1S0
-    call chp_set_NLO_contact(2, 0.68235563 ) ! C_3P0
-    call chp_set_NLO_contact(3, 0.03179001 ) ! C_1P1
-    call chp_set_NLO_contact(4, -0.91810582 ) ! C_3P1
-    call chp_set_NLO_contact(5, 1.13617113 ) ! C_3S1
-    call chp_set_NLO_contact(6, 0.46111177 ) ! C_3S1-3D1
-    call chp_set_NLO_contact(7, -0.88955910 ) ! C_3P2
+    call chp_set_NLO_contact(1, 2.52024031D+00 ) ! C_1S0
+    call chp_set_NLO_contact(2, 0.64477023D+00 ) ! C_3P0
+    call chp_set_NLO_contact(3, 0.18364315D+00 ) ! C_1P1
+    call chp_set_NLO_contact(4, -0.90129773D+00 ) ! C_3P1
+    call chp_set_NLO_contact(5, 1.31945937D+00 ) ! C_3S1
+    call chp_set_NLO_contact(6, 0.72331122D+00 ) ! C_3S1-3D1
+    call chp_set_NLO_contact(7, -0.88829717D+00 ) ! C_3P2
 
     ! N3LO contacts
     call chp_set_chiral_D(0) ! Do not use
