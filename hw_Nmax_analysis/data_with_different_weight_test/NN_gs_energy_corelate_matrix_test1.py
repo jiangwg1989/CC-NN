@@ -522,7 +522,7 @@ data_num = input_raw_data_count(input_path)
 print 'data_num='+str(data_num)
 # earlystopping parameters
 monitor  = 'loss'
-min_delta = 0.0001
+min_delta = 0.00001
 patience = 30
 epochs = 10000
 batch_size = 32
@@ -536,7 +536,7 @@ gs_energy_line = 0
 run_times_start = 1 
 run_times_end   = 100
 #parameter for gaussian distribution of sample_weight
-FWHM = 100
+FWHM = 25
 sigma = FWHM/2.355 
 #correlate parameters
 correlate_num = 20
@@ -551,7 +551,7 @@ os.system('mkdir '+nuclei)
 os.system('mkdir '+nuclei+'/'+target_option)        
 
 
-for max_nmax_fit in range(10,11,2):
+for max_nmax_fit in range(20,21,2):
     os.system('mkdir '+nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit))
     with open(nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit)+'/'+'gs_NN_info.txt','a') as f_3:
         #f_3.read()
