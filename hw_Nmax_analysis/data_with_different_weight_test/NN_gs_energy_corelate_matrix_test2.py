@@ -26,6 +26,57 @@ from keras import backend as K
 from keras.engine.topology import Layer
 from keras.layers.core import Lambda
 
+sess = tf.InteractiveSession()
+
+#A = [[1,2,3,4,5]]
+#AT= np.transpose(A)
+#AT= AT.astype(np.int32)
+#B = tf.ones_like(A)
+#C = tf.multiply(A,A)
+#Xi = tf.matmul(tf.transpose(B),C)
+#Xj = tf.matmul(tf.transpose(C),B)
+#Xij= tf.matmul(tf.transpose(A),A)
+#Y  = Xi+Xj-tf.multiply(Xij,2)
+#zero = tf.zeros_like(Y)
+#one  = tf.ones_like(Y)
+#Y  = tf.where(Y<2,one,zero)
+##Y  = tf.where(Y<2,one,zero)
+##print(sess.run(tf.fill([2,1],[1,2,3])))
+#print(sess.run(Xi+Xj-tf.multiply(Xij,2)))
+#print(sess.run(Y))
+#input()
+
+A = [[1,2,3,4,5]]
+AT= np.transpose(A)
+AT= AT.astype(np.int32)
+B = tf.ones_like(A)
+C = tf.multiply(A,A)
+Xi = tf.matmul(tf.transpose(B),A)
+Xj = tf.transpose(Xi)
+Xij= tf.matmul(tf.transpose(A),A)
+Y = Xi-Xj
+zero = tf.zeros_like(Xi,tf.float32)
+#zero = tf.cast(zero,tf.float32)
+one  = tf.ones_like(Xi,tf.float32)
+#one  = tf.cast(one ,tf.float32)
+Y  = tf.where(Y<0,-Y,Y)
+BB = tf.ones_like([1,2,3,4,5],tf.float32)
+W1 = tf.diag(BB*(1-0.5))
+W2 = tf.where(Y<3,0.5*one,zero)
+#print(sess.run(tf.fill([2,1],[1,2,3])))
+print(sess.run(Xi-Xj))
+print(sess.run(tf.add(W1,W2)))
+
+input()
+
+
+
+
+
+
+
+
+
 
 
 def normfun(x,mu,sigma):
@@ -163,31 +214,23 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
 
 
     #
-    # data_new = raw_data + data_interpolation   [[raw_data][data_interpolation]]
+    # data_new = raw_data + data_interpolation   [[raw_data][data_interpolation]] determine to add raw data in the fiting or not.
     #
-    data_new = np.vstack((raw_data,data_interpolation))
+    #data_new = np.vstack((raw_data,data_interpolation))
+    data_new = data_interpolation
+
+    #
+    # setup correlation info   (different nmax position are different by +interpol_count)
+    #
+    correlation_position = np.zeros((len(data_new),1))
     
+    loop3 = 0 
+    for loop1 in range(0,nmax_count):
+        for loop2 in range(1,interpol_count-1):
+            correlation_position[loop3][0] = loop2 + 2*interpol_count*loop1
+            loop3 = loop3+1
+    data_new   = np.hstack((data_new,correlation_position))
 
-
-    #
-    # setup correlation info
-    #
-    correlation_relation = np.zeros((len(data_new),data_num))
-    correlation_position = np.zeros((len(data_new),data_num))
-
-    for loop1 in range(0,data_num):
-        for loop2 in range(0,data_num):
-            #correlation_relation[loop1][loop2] = 0
-            if (loop1==loop2):  
-                correlation_position[loop1][loop2] = 1
-    for loop1 in range(data_num,len(data_new)):
-        for loop2 in range(0,data_num):
-            if (data_new[loop1][1]==raw_data[loop2][1]):   #relation should only be occur between raw_data and interpolation in the same nmax.
-                correlation_relation[loop1][loop2] = 1 
-    #print correlation_position#[152,:] 
-    #input()
-   
-    data_new   = np.hstack((data_new,correlation_position,correlation_relation))
     
     #
     # take part of the data for train (below certain nmax)
@@ -214,8 +257,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     
     x_train = data_new[:,1:3]
     y_train = data_new[:,0]
-    c_position = data_new[:,5:(5+data_num)]
-    c_relation = data_new[:,(5+data_num):(5+data_num*2)]
+    c_position = data_new[:,5]
 
     #print "x_train = "+str(x_train)
     #print "y_train = "+str(y_train)
@@ -246,22 +288,31 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     input_shape = (input_dim,)
     input_data  = Input(shape = input_shape)
     y_in        = Input(shape = (1,))
-    input_position = Input(shape = (len(raw_data),))
-    input_relation = Input(shape = (len(raw_data),))
+    input_position = Input(shape = (1,))
  
     # get the residual matrix R_ij 
     def R_ij(k):
         R = k[0]-k[1]
         R_matrix = K.dot(R,K.transpose(R))
+        #Rx = K.relu(R)
+        A  = tf.constant(1.0)
+        #Rxx= tf.cond(K.sum(Rx)<A,lambda:Rx,lambda:-Rx)
         return R_matrix
 
     def C_ij(k):
-        C_matrix = K.dot(k[0],K.transpose(k[1]))+K.dot(k[1],K.transpose(k[0]))
+        B = tf.ones_like(k)                   # creat a [1][1][1]... array
+        Xi = tf.matmul(B,tf.transpose(k))     # creat a [1,2,3,4...][1,2,3,4...] square matrix
+        Xj = tf.transpose(Xi)                 # creat a [1,1,1,1...][2,2,2,2,..] square matrix
+        Xij= tf.matmul(k,tf.transpose(k))     # get Xij matrix
+        Y = Xi-Xj                                # get Xi-Xj matrix
+        zero = tf.zeros_like(Xi,tf.float32)         
+        one  = tf.ones_like(Xi,tf.float32)        
+        Y  = tf.where(Y<0,-Y,Y)                  # matrix element is now all positive
+        C_matrix  = tf.where(Y<corr_num,corr_weight*one,zero)  # if matrix element is smaller than 
         return C_matrix         
 
     def correlated_loss(k):
-        R = k[1]-k[2]
-        A = K.sum(k[0])+K.dot(K.transpose(R),R)
+        A = K.sum(k[0])
         #A  = K.mean(K.dot(K.transpose(R),R)
         #A = K.dot(K.transpose(R),R)
         #A = K.mean(K.square(R))
@@ -271,13 +322,13 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     x                 =  Dense(8, activation = 'sigmoid')(input_data)
     predictions       =  Dense(output_dim)(x)
     residual_layer    =  Lambda(R_ij, name ='R_ij')([predictions,y_in])
-    correlation_layer =  Lambda(C_ij, name ='C_ij')([input_position,input_relation])
+    correlation_layer =  Lambda(C_ij, name ='C_ij')(input_position)
     mul_layer         =  Multiply()([residual_layer,correlation_layer])
 
     loss_layer        =  Lambda(correlated_loss,name='correlated_loss')([mul_layer,predictions,y_in])
 
 
-    model = Model(inputs= [input_data,y_in,input_position,input_relation], outputs = loss_layer)
+    model = Model(inputs= [input_data,y_in,input_position], outputs = loss_layer)
     
     adam = optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
     
@@ -307,7 +358,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     
     early_stopping = EarlyStopping(monitor=monitor,min_delta = min_delta , patience=patience, verbose=0, mode='min')
     
-    history = model.fit([x_train,y_train,c_position,c_relation],y_train, epochs = epochs,batch_size=batch_size, validation_split = 0.01 , shuffle = 1, callbacks=[early_stopping], sample_weight = data_new[:,3])
+    history = model.fit([x_train,y_train,c_position],y_train, epochs = epochs,batch_size=batch_size, validation_split = 0.01 , shuffle = 1, callbacks=[early_stopping], sample_weight = data_new[:,3])
     loss = history.history['loss'][len(history.history['loss'])-1]
     val_loss = history.history['val_loss'][len(history.history['val_loss'])-1]
    
@@ -540,8 +591,8 @@ run_times_end   = 100
 FWHM = 100
 sigma = FWHM/2.355 
 #correlate parameters
-correlate_num = 20
-
+corr_num   = 1
+corr_weight= 1
 
 
 gs_converge_all = np.zeros(run_times_end)
