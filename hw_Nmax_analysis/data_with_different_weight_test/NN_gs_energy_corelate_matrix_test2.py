@@ -46,28 +46,28 @@ sess = tf.InteractiveSession()
 #print(sess.run(Y))
 #input()
 
-A = [[1,2,3,4,5]]
-AT= np.transpose(A)
-AT= AT.astype(np.int32)
-B = tf.ones_like(A)
-C = tf.multiply(A,A)
-Xi = tf.matmul(tf.transpose(B),A)
-Xj = tf.transpose(Xi)
-Xij= tf.matmul(tf.transpose(A),A)
-Y = Xi-Xj
-zero = tf.zeros_like(Xi,tf.float32)
-#zero = tf.cast(zero,tf.float32)
-one  = tf.ones_like(Xi,tf.float32)
-#one  = tf.cast(one ,tf.float32)
-Y  = tf.where(Y<0,-Y,Y)
-BB = tf.ones_like([1,2,3,4,5],tf.float32)
-W1 = tf.diag(BB*(1-0.5))
-W2 = tf.where(Y<3,0.5*one,zero)
-#print(sess.run(tf.fill([2,1],[1,2,3])))
-print(sess.run(Xi-Xj))
-print(sess.run(tf.add(W1,W2)))
-
-input()
+#A = [[1,2,3,4,5]]
+#AT= np.transpose(A)
+#AT= AT.astype(np.int32)
+#B = tf.ones_like(A)
+#C = tf.multiply(A,A)
+#Xi = tf.matmul(tf.transpose(B),A)
+#Xj = tf.transpose(Xi)
+#Xij= tf.matmul(tf.transpose(A),A)
+#Y = Xi-Xj
+#zero = tf.zeros_like(Xi,tf.float32)
+##zero = tf.cast(zero,tf.float32)
+#one  = tf.ones_like(Xi,tf.float32)
+##one  = tf.cast(one ,tf.float32)
+#Y  = tf.where(Y<0,-Y,Y)
+#BB = tf.ones_like([1,2,3,4,5],tf.float32)
+#W1 = tf.diag(BB*(1-0.5))
+#W2 = tf.where(Y<1,0.5*one,zero)
+##print(sess.run(tf.fill([2,1],[1,2,3])))
+#print(sess.run(Xi-Xj))
+#print(sess.run(tf.add(W1,W2)))
+#
+#input()
 
 
 
@@ -199,10 +199,20 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     count_2 = 0
     for loop2 in range(0,nmax_count):
          for loop3 in range(1,interpol_count-1):
-             data_interpolation[count_1,3] = normfun(x_new[loop2,loop3],min_position[loop2],sigma) 
+             if(sample_weight_switch   == 'on'):
+                 data_interpolation[count_1,3] = normfun(x_new[loop2,loop3],min_position[loop2],sigma) 
+             elif(sample_weight_switch == 'off'):
+                 data_interpolation[count_1,3] = 1
+             else:
+                 print('sample_weight_switch error!') 
              count_1 = count_1 +1
          for loop4 in range(0,len(raw_data[np.where(raw_data[:,1]==(loop2*2+nmax_min))])):
-             raw_data[count_2,3] = normfun(raw_data[count_2,2],min_position[loop2],sigma)
+             if(sample_weight_switch   == 'on'):
+                 raw_data[count_2,3] = normfun(raw_data[count_2,2],min_position[loop2],sigma)
+             elif(sample_weight_switch == 'off'):
+                 raw_data[count_2,3] = 1
+             else:
+                 print('sample_weight_switch error!') 
              count_2 = count_2 +1
  
     #fig6 = plt.figure('fig6')
@@ -300,10 +310,10 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
         return R_matrix
 
     def C_ij(k):
-        B = tf.ones_like(k)                   # creat a [1][1][1]... array
-        Xi = tf.matmul(B,tf.transpose(k))     # creat a [1,2,3,4...][1,2,3,4...] square matrix
-        Xj = tf.transpose(Xi)                 # creat a [1,1,1,1...][2,2,2,2,..] square matrix
-        Xij= tf.matmul(k,tf.transpose(k))     # get Xij matrix
+        B = tf.ones_like(k)                      # creat a [1][1][1]... array
+        Xi = tf.matmul(B,tf.transpose(k))        # creat a [1,2,3,4...][1,2,3,4...] square matrix
+        Xj = tf.transpose(Xi)                    # creat a [1,1,1,1...][2,2,2,2,..] square matrix
+        Xij= tf.matmul(k,tf.transpose(k))        # get Xij matrix
         Y = Xi-Xj                                # get Xi-Xj matrix
         zero = tf.zeros_like(Xi,tf.float32)         
         one  = tf.ones_like(Xi,tf.float32)        
@@ -312,24 +322,33 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
         return C_matrix         
 
     def correlated_loss(k):
-        A = K.sum(k[0])
+        D = K.sum(k)
         #A  = K.mean(K.dot(K.transpose(R),R)
         #A = K.dot(K.transpose(R),R)
         #A = K.mean(K.square(R))
-        return A/batch_size
+        return D/batch_size
     
+    def test(k):
+        E = K.sum(k)
+        #print(k)
+        #input()
+        #E = E*0+6*140 
+        #B = k.ones_like()
+        #return E/batch_size
+        return E
+
     # set up NN structure
     x                 =  Dense(8, activation = 'sigmoid')(input_data)
     predictions       =  Dense(output_dim)(x)
     residual_layer    =  Lambda(R_ij, name ='R_ij')([predictions,y_in])
     correlation_layer =  Lambda(C_ij, name ='C_ij')(input_position)
     mul_layer         =  Multiply()([residual_layer,correlation_layer])
-
-    loss_layer        =  Lambda(correlated_loss,name='correlated_loss')([mul_layer,predictions,y_in])
-
+    loss_layer        =  Lambda(correlated_loss,name='correlated_loss')(mul_layer)
+    test_layer        =  Lambda(test,name='test')(correlation_layer)
 
     model = Model(inputs= [input_data,y_in,input_position], outputs = loss_layer)
     
+#    model = Model(inputs= [input_data,y_in,input_position], outputs = test_layer)
     adam = optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
     
 
@@ -588,11 +607,12 @@ gs_energy_line = 0
 run_times_start = 1 
 run_times_end   = 100
 #parameter for gaussian distribution of sample_weight
+sample_weight_switch = 'off'
 FWHM = 100
 sigma = FWHM/2.355 
 #correlate parameters
 corr_num   = 1
-corr_weight= 1
+corr_weight= 1.
 
 
 gs_converge_all = np.zeros(run_times_end)

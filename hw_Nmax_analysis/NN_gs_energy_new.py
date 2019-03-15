@@ -366,9 +366,9 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
 #
 # all NN parameters
 #
-nuclei = 'Li6'
+nuclei = 'He4'
 target_option = 'gs'
-input_path = 'Li6E_NNLOopt.txt'
+input_path = 'He4E_NNLOopt.txt'
 #output_path = './result/gs/'
 data_num = input_raw_data_count(input_path)
 print 'data_num='+str(data_num)
