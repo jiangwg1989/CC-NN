@@ -136,7 +136,8 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
     input_data = Input(shape = input_shape)
     
     #raw_data_new  = raw_data[np.where(raw_data[:,1]<11)]
-    raw_data_new = data_interpolation[np.where(data_interpolation[:,1]<=max_nmax_fit)]
+    #raw_data_new = data_interpolation[np.where(data_interpolation[:,1]<=max_nmax_fit)]
+    raw_data_new = raw_data[np.where(raw_data[:,1]<=max_nmax_fit)]
     #raw_data_new = data_interpolation
     #print "raw_data_new="+str(raw_data_new)
     
@@ -396,7 +397,7 @@ os.system('mkdir '+nuclei)
 os.system('mkdir '+nuclei+'/'+target_option)        
 
 
-for max_nmax_fit in range(10,11,2):
+for max_nmax_fit in range(20,21,2):
     os.system('mkdir '+nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit))
     with open(nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit)+'/'+'gs_NN_info.txt','a') as f_3:
         #f_3.read()
