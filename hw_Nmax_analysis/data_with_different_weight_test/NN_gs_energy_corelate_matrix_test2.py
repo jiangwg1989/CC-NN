@@ -318,7 +318,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
         zero = tf.zeros_like(Xi,tf.float32)         
         one  = tf.ones_like(Xi,tf.float32)        
         Y  = tf.where(Y<0,-Y,Y)                  # matrix element is now all positive
-        C_matrix  = tf.where(Y<corr_num,corr_weight*one,zero)  # if matrix element is smaller than 
+        C_matrix  = tf.where(Y<corr_num,corr_weight*one,zero)  # if matrix element is smaller than corr_num, then C_matrix element is corr_weight*1, otherwise it is zero. When Y == |x-y|, so when x==y , Y = 0, x and y are next to each other, Y = 1. 
         return C_matrix         
 
     def correlated_loss(k):
@@ -344,7 +344,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     correlation_layer =  Lambda(C_ij, name ='C_ij')(input_position)
     mul_layer         =  Multiply()([residual_layer,correlation_layer])
     loss_layer        =  Lambda(correlated_loss,name='correlated_loss')(mul_layer)
-    test_layer        =  Lambda(test,name='test')(correlation_layer)
+#    test_layer        =  Lambda(test,name='test')(correlation_layer)
 
     model = Model(inputs= [input_data,y_in,input_position], outputs = loss_layer)
     
@@ -594,7 +594,7 @@ print 'data_num='+str(data_num)
 # earlystopping parameters
 monitor  = 'loss'
 min_delta = 0.0001
-patience = 30
+patience = 50
 epochs = 10000
 batch_size = 32
 input_dim = 2 
@@ -611,7 +611,7 @@ sample_weight_switch = 'off'
 FWHM = 100
 sigma = FWHM/2.355 
 #correlate parameters
-corr_num   = 1
+corr_num   = 2
 corr_weight= 1.
 
 
@@ -623,7 +623,7 @@ os.system('mkdir '+nuclei)
 os.system('mkdir '+nuclei+'/'+target_option)        
 
 
-for max_nmax_fit in range(10,11,2):
+for max_nmax_fit in range(20,21,2):
     os.system('mkdir '+nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit))
     with open(nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit)+'/'+'gs_NN_info.txt','a') as f_3:
         #f_3.read()
