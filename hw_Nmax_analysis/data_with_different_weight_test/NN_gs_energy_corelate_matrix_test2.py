@@ -26,7 +26,7 @@ from keras import backend as K
 from keras.engine.topology import Layer
 from keras.layers.core import Lambda
 
-sess = tf.InteractiveSession()
+#sess = tf.InteractiveSession()
 
 #A = [[1,2,3,4,5]]
 #AT= np.transpose(A)
@@ -623,7 +623,7 @@ os.system('mkdir '+nuclei)
 os.system('mkdir '+nuclei+'/'+target_option)        
 
 
-for max_nmax_fit in range(20,21,2):
+for max_nmax_fit in range(12,15,2):
     os.system('mkdir '+nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit))
     with open(nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit)+'/'+'gs_NN_info.txt','a') as f_3:
         #f_3.read()
