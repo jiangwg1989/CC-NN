@@ -138,7 +138,7 @@ def input_raw_data_count(file_path):
 
 
 
-def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,batch_size,input_dim,output_dim,interpol_count,max_nmax_fit,sigma):
+def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,batch_size,input_dim,output_dim,interpol_count,max_nmax_fit,FWHM_percent):
     
     #
     # Take in all the input data from file
@@ -192,15 +192,69 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     #
  
     # sort the raw_data with nmax(4->20)
-    #raw_data = raw_data[raw_data[:,2].argsort()]
     raw_data = raw_data[raw_data[:,1].argsort()]
 
+##
+##   first way of doing gussian sample weights, according to distance with the minimum 
+## 
+#    count_1 = 0
+#    count_2 = 0
+#    for loop2 in range(0,nmax_count):
+#         for loop3 in range(1,interpol_count-1):
+#             if(sample_weight_switch   == 'on'):
+#                 data_interpolation[count_1,3] = normfun(x_new[loop2,loop3],min_position[loop2],sigma) 
+#             elif(sample_weight_switch == 'off'):
+#                 data_interpolation[count_1,3] = 1
+#             else:
+#                 print('sample_weight_switch error!') 
+#             count_1 = count_1 +1
+#         for loop4 in range(0,len(raw_data[np.where(raw_data[:,1]==(loop2*2+nmax_min))])):
+#             if(sample_weight_switch   == 'on'):
+#                 raw_data[count_2,3] = normfun(raw_data[count_2,2],min_position[loop2],sigma)
+#             elif(sample_weight_switch == 'off'):
+#                 raw_data[count_2,3] = 1
+#             else:
+#                 print('sample_weight_switch error!') 
+#             count_2 = count_2 +1
+    
+##
+##  second way of doing gussian sample weights, according to the cross point with last Nmax
+##
+# find the cross point of largest nmax with the last but one Nmax
+    x_cross_point = 0
+    y_cross_point = 0
+    
+    raw_data_new = raw_data[np.where(raw_data[:,1]==(nmax_max))]
+    line_1_x = raw_data_new[:,2]
+    line_1_y = raw_data_new[:,0]
+    raw_data_new = raw_data[np.where(raw_data[:,1]==(nmax_max-2))]
+    line_2_x = raw_data_new[:,2]
+    line_2_y = raw_data_new[:,0]
+
+#   radius_range is the FWHM 
+    radius_range = (np.max(line_1_y)-np.min(line_1_y)+np.max(line_1_y)-np.min(line_1_y))/2.
+
+#  balance x and y
+    regulator = (np.max(line_1_x)-np.min(line_1_x)) / (np.max(line_1_y)-np.min(line_1_y))
+#    print(regulator)
+    temp_min = pow((line_1_x[0]/regulator-line_2_x[0]/regulator),2)+pow(line_1_y[0] - line_2_y[0],2)
+    for loop1 in range(0,len(line_1_x)):
+        for loop2 in range(0,len(line_1_x)):
+            temp = pow((line_1_x[loop1]/regulator-line_2_x[loop2]/regulator),2)+pow(line_1_y[loop1] - line_2_y[loop2],2) 
+            #print("temp="+str(temp))
+            if(temp < temp_min):
+                temp_min = temp
+                x_cross_point = line_1_x[loop1]#(line_1_x[loop1] + line_2_x[loop2])/2.
+                y_cross_point = line_1_y[loop1]#(line_1_y[loop1] + line_2_y[loop2])/2. 
+
+    print ("x_cross_point="+str(x_cross_point))
+    print ("y_cross_point="+str(y_cross_point))
     count_1 = 0
     count_2 = 0
     for loop2 in range(0,nmax_count):
          for loop3 in range(1,interpol_count-1):
              if(sample_weight_switch   == 'on'):
-                 data_interpolation[count_1,3] = normfun(x_new[loop2,loop3],min_position[loop2],sigma) 
+                 data_interpolation[count_1,3] = normfun(y_new[loop2,loop3],y_cross_point, radius_range*FWHM_percent ) # gaussian distribute accroding to y_cross_point value
              elif(sample_weight_switch == 'off'):
                  data_interpolation[count_1,3] = 1
              else:
@@ -208,19 +262,25 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
              count_1 = count_1 +1
          for loop4 in range(0,len(raw_data[np.where(raw_data[:,1]==(loop2*2+nmax_min))])):
              if(sample_weight_switch   == 'on'):
-                 raw_data[count_2,3] = normfun(raw_data[count_2,2],min_position[loop2],sigma)
+                 raw_data[count_2,3] = normfun(raw_data[count_2,0],y_cross_point,radius_range*FWHM_percent)
              elif(sample_weight_switch == 'off'):
                  raw_data[count_2,3] = 1
              else:
                  print('sample_weight_switch error!') 
              count_2 = count_2 +1
  
-    #fig6 = plt.figure('fig6')
-    #plt.plot(data_interpolation[30000:40000,2],data_interpolation[30000:40000,3],color='y',linestyle='--')
-    #plt.ylim((-29,-23))  
-    #plt.xlim((10,50))
-    #fig6.show()
-    #plt.close('all')
+    #print(data_interpolation[:,1])
+#    fig6 = plt.figure('fig6')
+#    l2 = plt.scatter(data_interpolation[:,3],data_interpolation[:,0],color='k')
+#    l1 = plt.scatter(data_interpolation[:,2],data_interpolation[:,0],color='y')
+#    #plt.scatter(data_interpolation[:,0],data_interpolation[:,3],color='y',linestyle='--')
+#    #l1 = plt.scatter(line_1_x,line_1_y)
+#    #l2 = plt.scatter(line_2_x,line_2_y)
+#    plt.ylim((1.3,1.5))  
+#    #plt.xlim((25,40))
+#    plt.savefig('test.pdf')
+#    plt.close('all')
+#    input()
 
 
     #
@@ -585,9 +645,9 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
 #
 # all NN parameters
 #
-nuclei = 'Li6'
-target_option = 'Li6'
-input_path = 'Li6R_NNLOopt.txt'
+nuclei = 'He4'
+target_option = 'radius'
+input_path = 'He4R_NNLOopt.txt'
 #output_path = './result/radius/'
 data_num = input_raw_data_count(input_path)
 print 'data_num='+str(data_num)
@@ -607,9 +667,10 @@ radius_line = 0
 run_times_start = 1 
 run_times_end   = 100
 #parameter for gaussian distribution of sample_weight
-sample_weight_switch = 'off'
-FWHM = 100
-sigma = FWHM/2.355 
+sample_weight_switch = 'on'
+FWHM_percent = 0.7
+
+#sigma = FWHM/2.355 
 #correlate parameters
 corr_num   = 2
 corr_weight= 1.
@@ -632,7 +693,7 @@ for max_nmax_fit in range(20,23,2):
     for loop_all in range(run_times_start-1,run_times_end):
         os.system('mkdir '+nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit)+'/'+str(loop_all+1))
         output_path = nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit)+'/'+str(loop_all+1)
-        radius_converge_all[loop_all],loss_all[loop_all],val_loss_all[loop_all] = NN_all(input_path=input_path,output_path=output_path,data_num=data_num,monitor=monitor,min_delta=min_delta,patience=patience,epochs=epochs,batch_size=batch_size,input_dim=input_dim,output_dim=output_dim,interpol_count=interpol_count,max_nmax_fit=max_nmax_fit,sigma=sigma)
+        radius_converge_all[loop_all],loss_all[loop_all],val_loss_all[loop_all] = NN_all(input_path=input_path,output_path=output_path,data_num=data_num,monitor=monitor,min_delta=min_delta,patience=patience,epochs=epochs,batch_size=batch_size,input_dim=input_dim,output_dim=output_dim,interpol_count=interpol_count,max_nmax_fit=max_nmax_fit,FWHM_percent=FWHM_percent)
         with open(nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit)+'/'+'radius_NN_info.txt','a') as f_3:
             #f_3.read()
             f_3.write('{:>5}'.format(loop_all+1)+'   ')
