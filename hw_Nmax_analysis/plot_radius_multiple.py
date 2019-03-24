@@ -46,8 +46,8 @@ plt.title("He4_Multi-NN_Nmax4~"+str(max_nmax_fit))
 plt.xlabel("radius_energy")
 plt.ylabel("loss")
 #plt.legend(loc = 'lower left')
-plt.ylim((0,0.05))
-plt.xlim((-28,-27.4))
+plt.ylim((0,0.00002))
+plt.xlim((1.3,1.7))
 #plt.savefig('Li6_radius_NN_prediction.jpg')
 plot_path = 'Multi-NN.eps'
 plt.savefig(plot_path)
@@ -55,7 +55,7 @@ fig_1.show()
 
 
 
-raw_data_new_2 = raw_data_new[np.where((raw_data_new[:,0]>-28)&(raw_data_new[:,0]<-27.4))]
+raw_data_new_2 = raw_data_new[np.where((raw_data_new[:,0]>1.35)&(raw_data_new[:,0]<1.8))]
 x_list_1 = raw_data_new_2[:,0]
 
 print x_list_1
@@ -64,7 +64,7 @@ fig_2 = plt.figure('fig_2')
 
 sns.set_palette("hls") 
 mpl.rc("figure", figsize=(6,4)) 
-sns.distplot(x_list_1,bins=10,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ "color": "lightblue"}) 
+sns.distplot(x_list_1,bins=20,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ "color": "lightblue"}) 
 
 #plt.hist(x_list_1,200,normed=2,histtype='bar',facecolor='yellowgreen',alpha=0.75)
 #l = plt.scatter(x_list,y_list,color='k',linestyle='--',s = 10, marker = 'x', label='E(infinite)')
@@ -72,9 +72,10 @@ sns.distplot(x_list_1,bins=10,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ 
 #
 #plt.title("E(converge)="+str(gs_converge))
 plt.ylabel("count")
-plt.xlabel("radius_energy")
+plt.xlabel("radius (fm)")
 #plt.legend(loc = 'lower left')
-plt.xlim((-28,-27.4))
+plt.xlim((1.3,1.7))
+plt.ylim((0,16))
 ##plt.savefig('Li6_radius_NN_prediction.jpg')
 plot_path = 'multi-NN_distribution.eps'
 plt.savefig(plot_path)

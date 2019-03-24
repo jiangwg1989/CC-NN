@@ -306,6 +306,10 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     # take part of the data for train (below certain nmax)
     #
     data_new   =  data_new[np.where((data_new[:,1]<=max_nmax_fit))]
+    
+#### test wtf!!!
+    data_new   =  data_new[np.where((data_new[:,2]>20))]
+
 
     #print data_new[144,:]
     #input()
@@ -554,8 +558,8 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     plt.legend(loc='upper right', bbox_to_anchor=(1.5,0.75),ncol=1,fancybox=True,shadow=True,borderaxespad = 0.)
     plt.title("radius(infinite)="+str(radius_converge))
     plot_path = 'radius.eps'
-    plt.ylim((-1.5,-2.4))  
-    plt.xlim((10,70))
+    plt.ylim((1,3))  
+    plt.xlim((10,50))
     plt.subplots_adjust(right = 0.7)
     plt.savefig(plot_path)
     plt.close('all')
@@ -684,7 +688,7 @@ os.system('mkdir '+nuclei)
 os.system('mkdir '+nuclei+'/'+target_option)        
 
 
-for max_nmax_fit in range(20,23,2):
+for max_nmax_fit in range(10,11,2):
     os.system('mkdir '+nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit))
     with open(nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit)+'/'+'radius_NN_info.txt','a') as f_3:
         #f_3.read()
