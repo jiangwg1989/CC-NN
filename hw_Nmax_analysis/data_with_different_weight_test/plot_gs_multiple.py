@@ -50,8 +50,7 @@ fig_1.show()
 
 
 
-raw_data_new_2 = raw_data_new[np.where((raw_data_new[:,0]>-28)&(raw_data_new[:,0]<-27.4)&(raw_data_new[:,1]<0.015))]
-raw_data_new_3 = raw_data_new[np.where((raw_data_new[:,0]>-28)&(raw_data_new[:,0]<-27.4)&(raw_data_new[:,1]>0.015))]
+raw_data_new_2 = raw_data_new[np.where((raw_data_new[:,0]>-28)&(raw_data_new[:,0]<-27.4))]
 x_list_1 = raw_data_new_2[:,0]
 
 print x_list_1
@@ -71,7 +70,7 @@ plt.ylabel("count")
 plt.xlabel("gs_energy (MeV)")
 #plt.legend(loc = 'lower left')
 plt.xlim((-28,-27.4))
-#plt.ylim((0,15))
+plt.ylim((0,15))
 ##plt.savefig('Li6_radius_NN_prediction.jpg')
 plot_path = 'multi-NN_distribution.eps'
 plt.savefig(plot_path)
@@ -81,4 +80,4 @@ fig_2.show()
 
 
 
-input()
+#input()
