@@ -623,7 +623,7 @@ os.system('mkdir '+nuclei)
 os.system('mkdir '+nuclei+'/'+target_option)        
 
 
-for max_nmax_fit in range(16,17,2):
+for max_nmax_fit in range(16,19,2):
     os.system('mkdir '+nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit))
     with open(nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit)+'/'+'gs_NN_info.txt','a') as f_3:
         #f_3.read()
@@ -645,4 +645,4 @@ for max_nmax_fit in range(16,17,2):
 print 'gs_converge_all='+str(gs_converge_all)
 
 
-#input()G
+#input()

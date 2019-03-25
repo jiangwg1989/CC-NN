@@ -11,11 +11,13 @@ import os
 import matplotlib
 import matplotlib.pyplot as plt
 import tensorflow as tf
+import keras.losses
+
 
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 from keras.models import Sequential
 from keras.utils import np_utils
-from keras.layers import Input, Dense, Dropout, Activation, Multiply
+from keras.layers import Input, Dense, Dropout, Activation, Merge, Multiply
 from keras.models import Model
 from keras import optimizers
 from keras.optimizers import RMSprop
@@ -26,6 +28,10 @@ from keras import layers
 from keras import backend as K
 from keras.engine.topology import Layer
 from keras.layers.core import Lambda
+
+matplotlib.rcParams['xtick.direction'] = 'in'
+matplotlib.rcParams['ytick.direction'] = 'in'
+ 
 
 #sess = tf.InteractiveSession()
 
@@ -71,21 +77,12 @@ from keras.layers.core import Lambda
 #input()
 
 
-
-
-
-
-
-
-
-
-
 def normfun(x,mu,sigma):
     pdf = np.exp(-((x - mu)**2)/(2*sigma**2)) / (sigma * np.sqrt(2*np.pi))
     return pdf
 
 
-def input_file_1(file_path,raw_data,radius_line,nmax_line,hw_line):
+def input_file_1(file_path,raw_data,gs_energy_line,nmax_line,hw_line):
     count = len(open(file_path,'rU').readlines())
     with open(file_path,'r') as f_1:
         data =  f_1.readlines()
@@ -95,13 +92,13 @@ def input_file_1(file_path,raw_data,radius_line,nmax_line,hw_line):
         while loop1 < count:
             if ( re.match('#', data[loop1],flags=0) == wtf):
                 temp_1 = re.findall(r"[-+]?\d+\.?\d*",data[loop1]) 
-                raw_data[loop2][0] = float(temp_1[radius_line])
+                raw_data[loop2][0] = float(temp_1[gs_energy_line])
                 raw_data[loop2][1] = int(temp_1[nmax_line])
                 raw_data[loop2][2] = float(temp_1[hw_line])
                 raw_data[loop2][4] = 1
                 loop2 = loop2 + 1
             loop1 = loop1 + 1
-        #print loop2  
+        print loop2  
 
 def input_file_2(file_path,raw_data):
     count = len(open(file_path,'rU').readlines())
@@ -139,13 +136,13 @@ def input_raw_data_count(file_path):
 
 
 
-def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,batch_size,input_dim,output_dim,interpol_count,max_nmax_fit,FWHM_percent):
+def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,batch_size,input_dim,output_dim,interpol_count,max_nmax_fit,sigma):
     
     #
     # Take in all the input data from file
     # 
     raw_data = np.zeros((data_num,5),dtype = np.float)
-    input_file_1(input_path,raw_data,radius_line,nmax_line,hw_line)
+    input_file_1(input_path,raw_data,gs_energy_line,nmax_line,hw_line)
    
 
  
@@ -157,7 +154,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     kind = "quadratic"
     nmax_max = int(np.max(raw_data[:,1]))
     nmax_min = int(np.min(raw_data[:,1]))
-    nmax_count = int((nmax_max-nmax_min)/2 + 1)
+    nmax_count = (nmax_max-nmax_min)/2 + 1
     x_new = np.zeros((nmax_count,interpol_count))
     y_new = np.zeros((nmax_count,interpol_count))
     interpol_count_tot = 0   
@@ -193,69 +190,15 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     #
  
     # sort the raw_data with nmax(4->20)
+    #raw_data = raw_data[raw_data[:,2].argsort()]
     raw_data = raw_data[raw_data[:,1].argsort()]
 
-##
-##   first way of doing gussian sample weights, according to distance with the minimum 
-## 
-#    count_1 = 0
-#    count_2 = 0
-#    for loop2 in range(0,nmax_count):
-#         for loop3 in range(1,interpol_count-1):
-#             if(sample_weight_switch   == 'on'):
-#                 data_interpolation[count_1,3] = normfun(x_new[loop2,loop3],min_position[loop2],sigma) 
-#             elif(sample_weight_switch == 'off'):
-#                 data_interpolation[count_1,3] = 1
-#             else:
-#                 print('sample_weight_switch error!') 
-#             count_1 = count_1 +1
-#         for loop4 in range(0,len(raw_data[np.where(raw_data[:,1]==(loop2*2+nmax_min))])):
-#             if(sample_weight_switch   == 'on'):
-#                 raw_data[count_2,3] = normfun(raw_data[count_2,2],min_position[loop2],sigma)
-#             elif(sample_weight_switch == 'off'):
-#                 raw_data[count_2,3] = 1
-#             else:
-#                 print('sample_weight_switch error!') 
-#             count_2 = count_2 +1
-    
-##
-##  second way of doing gussian sample weights, according to the cross point with last Nmax
-##
-# find the cross point of largest nmax with the last but one Nmax
-    x_cross_point = 0
-    y_cross_point = 0
-    
-    raw_data_new = raw_data[np.where(raw_data[:,1]==(nmax_max))]
-    line_1_x = raw_data_new[:,2]
-    line_1_y = raw_data_new[:,0]
-    raw_data_new = raw_data[np.where(raw_data[:,1]==(nmax_max-2))]
-    line_2_x = raw_data_new[:,2]
-    line_2_y = raw_data_new[:,0]
-
-#   radius_range is the FWHM 
-    radius_range = (np.max(line_1_y)-np.min(line_1_y)+np.max(line_1_y)-np.min(line_1_y))/2.
-
-#  balance x and y
-    regulator = (np.max(line_1_x)-np.min(line_1_x)) / (np.max(line_1_y)-np.min(line_1_y))
-#    print(regulator)
-    temp_min = pow((line_1_x[0]/regulator-line_2_x[0]/regulator),2)+pow(line_1_y[0] - line_2_y[0],2)
-    for loop1 in range(0,len(line_1_x)):
-        for loop2 in range(0,len(line_1_x)):
-            temp = pow((line_1_x[loop1]/regulator-line_2_x[loop2]/regulator),2)+pow(line_1_y[loop1] - line_2_y[loop2],2) 
-            #print("temp="+str(temp))
-            if(temp < temp_min):
-                temp_min = temp
-                x_cross_point = line_1_x[loop1]#(line_1_x[loop1] + line_2_x[loop2])/2.
-                y_cross_point = line_1_y[loop1]#(line_1_y[loop1] + line_2_y[loop2])/2. 
-
-    print ("x_cross_point="+str(x_cross_point))
-    print ("y_cross_point="+str(y_cross_point))
     count_1 = 0
     count_2 = 0
     for loop2 in range(0,nmax_count):
          for loop3 in range(1,interpol_count-1):
              if(sample_weight_switch   == 'on'):
-                 data_interpolation[count_1,3] = normfun(y_new[loop2,loop3],y_cross_point, radius_range*FWHM_percent ) # gaussian distribute accroding to y_cross_point value
+                 data_interpolation[count_1,3] = normfun(x_new[loop2,loop3],min_position[loop2],sigma) 
              elif(sample_weight_switch == 'off'):
                  data_interpolation[count_1,3] = 1
              else:
@@ -263,25 +206,19 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
              count_1 = count_1 +1
          for loop4 in range(0,len(raw_data[np.where(raw_data[:,1]==(loop2*2+nmax_min))])):
              if(sample_weight_switch   == 'on'):
-                 raw_data[count_2,3] = normfun(raw_data[count_2,0],y_cross_point,radius_range*FWHM_percent)
+                 raw_data[count_2,3] = normfun(raw_data[count_2,2],min_position[loop2],sigma)
              elif(sample_weight_switch == 'off'):
                  raw_data[count_2,3] = 1
              else:
                  print('sample_weight_switch error!') 
              count_2 = count_2 +1
  
-    #print(data_interpolation[:,1])
-#    fig6 = plt.figure('fig6')
-#    l2 = plt.scatter(data_interpolation[:,3],data_interpolation[:,0],color='k')
-#    l1 = plt.scatter(data_interpolation[:,2],data_interpolation[:,0],color='y')
-#    #plt.scatter(data_interpolation[:,0],data_interpolation[:,3],color='y',linestyle='--')
-#    #l1 = plt.scatter(line_1_x,line_1_y)
-#    #l2 = plt.scatter(line_2_x,line_2_y)
-#    plt.ylim((1.3,1.5))  
-#    #plt.xlim((25,40))
-#    plt.savefig('test.pdf')
-#    plt.close('all')
-#    input()
+    #fig6 = plt.figure('fig6')
+    #plt.plot(data_interpolation[30000:40000,2],data_interpolation[30000:40000,3],color='y',linestyle='--')
+    #plt.ylim((-29,-23))  
+    #plt.xlim((10,50))
+    #fig6.show()
+    #plt.close('all')
 
 
     #
@@ -307,10 +244,6 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     # take part of the data for train (below certain nmax)
     #
     data_new   =  data_new[np.where((data_new[:,1]<=max_nmax_fit))]
-    
-#### test wtf!!!
-    data_new   =  data_new[np.where((data_new[:,2]>20))]
-
 
     #print data_new[144,:]
     #input()
@@ -401,7 +334,8 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
         #B = k.ones_like()
         #return E/batch_size
         return E
-
+    
+ 
     # set up NN structure
     x                 =  Dense(8, activation = 'sigmoid')(input_data)
     predictions       =  Dense(output_dim)(x)
@@ -442,44 +376,126 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     
     early_stopping = EarlyStopping(monitor=monitor,min_delta = min_delta , patience=patience, verbose=0, mode='min')
     
-    history = model.fit([x_train,y_train,c_position],y_train, epochs = epochs,batch_size=batch_size, validation_split = 0.01 , shuffle = 1, callbacks=[early_stopping], sample_weight = data_new[:,3])
-    loss = history.history['loss'][len(history.history['loss'])-1]
-    val_loss = history.history['val_loss'][len(history.history['val_loss'])-1]
+#    history = model.fit([x_train,y_train,c_position],y_train, epochs = epochs,batch_size=batch_size, validation_split = 0.01 , shuffle = 1, callbacks=[early_stopping], sample_weight = data_new[:,3])
+#    loss = history.history['loss'][len(history.history['loss'])-1]
+#    val_loss = history.history['val_loss'][len(history.history['val_loss'])-1]
    
     #val_loss = 0 
     #fig4 = plt.figure('fig4')
     #plt.plot(history.history['loss'])
     #plt.plot(history.history['val_loss'])
     #plt.savefig('loss_val_loss.eps')
-    plt.close('all')
+#    plt.close('all')
 
 
-    model_path = 'radius.h5' 
-    model.save(model_path)
-    predic_model = Model(inputs =input_data, outputs = predictions)
+#    model_path = 'gs.h5' 
+#    model.save(model_path)
+
+#    predic_model = Model(inputs =input_data, outputs = predictions)
     #
     # load model
     #
-    #Li6_model = load_model('Li6_radius.h5') 
+
+    model.load_weights('cluster_1.h5') 
+    predic_model_1 = Model(inputs =input_data, outputs = predictions)
     
+  
     
-    
-    count = len(range(4,204,1))*len(range(5,101,1))
+    count = len(range(4,204,1))*len(range(5,121,1))
     x_test = np.zeros((count,2),dtype = np.float)
     
     loop3 = 0
     
     
     for loop1 in range(4,204,1):
-        for loop2 in range(5,101,1):
+        for loop2 in range(5,121,1):
             x_test[loop3][0] = loop1 
             x_test[loop3][1] = loop2 
             loop3 = loop3 + 1
     
     #print x_test
     
-    y_test = predic_model.predict(x_test)
+    y_test = predic_model_1.predict(x_test)
     
+    raw_predic_data = np.concatenate((y_test,x_test),axis=1)
+    
+    #print "raw_predic_data="+str(raw_predic_data)
+    
+    #fig,(ax0,ax1) = plt.subplots(nrows = 2, figsize=(9,9))
+    raw_data_cut = raw_data[np.where(raw_data[:,1]<11)] 
+    x_list_1     = raw_data_cut[:,2] 
+    y_list_1     = raw_data_cut[:,0]
+    
+    raw_predic_data_2  = raw_predic_data[np.where(raw_predic_data[:,1]==4)]
+    raw_predic_data_3  = raw_predic_data[np.where(raw_predic_data[:,1]==6)]
+    raw_predic_data_4  = raw_predic_data[np.where(raw_predic_data[:,1]==8)]
+    raw_predic_data_5  = raw_predic_data[np.where(raw_predic_data[:,1]==10)]
+    raw_predic_data_6  = raw_predic_data[np.where(raw_predic_data[:,1]==12)]
+    raw_predic_data_7  = raw_predic_data[np.where(raw_predic_data[:,1]==14)]
+    raw_predic_data_8  = raw_predic_data[np.where(raw_predic_data[:,1]==16)]
+    raw_predic_data_9  = raw_predic_data[np.where(raw_predic_data[:,1]==18)]
+    raw_predic_data_10 = raw_predic_data[np.where(raw_predic_data[:,1]==20)]
+
+
+    temp = (raw_predic_data[np.where(raw_predic_data[:,1]== 200)])
+    gs_converge = np.min(temp[:,0])
+   
+ 
+    
+    x_list_2 = raw_predic_data_2[:,2]
+    y_list_2 = raw_predic_data_2[:,0]
+    
+    x_list_3 = raw_predic_data_3[:,2]
+    y_list_3 = raw_predic_data_3[:,0]
+    
+    x_list_4 = raw_predic_data_4[:,2]
+    y_list_4 = raw_predic_data_4[:,0]
+    
+    x_list_5 = raw_predic_data_5[:,2]
+    y_list_5 = raw_predic_data_5[:,0]
+    
+    
+    x_list_6 = raw_predic_data_6[:,2]
+    y_list_6 = raw_predic_data_6[:,0]
+    
+    x_list_7 = raw_predic_data_7[:,2]
+    y_list_7 = raw_predic_data_7[:,0]
+    
+    x_list_8 = raw_predic_data_8[:,2]
+    y_list_8 = raw_predic_data_8[:,0]
+
+    x_list_9 = raw_predic_data_9[:,2]
+    y_list_9 = raw_predic_data_9[:,0]
+ 
+    x_list_10= raw_predic_data_10[:,2]
+    y_list_10= raw_predic_data_10[:,0]
+ 
+    
+    fig1 = plt.figure('fig1')
+    ax = plt.subplot(111)
+    cluster_1_color = 'forestgreen'
+    l1=plt.scatter(x_list_1,y_list_1,color='k',linestyle='--',s = 18, marker = 'x', zorder= 4,label=r'$\rm{NNLO}_{\rm{opt}}$')
+    l2 =plt.plot(x_list_2 ,y_list_2 ,alpha=0.8, color=cluster_1_color,linestyle='-', zorder=3 ,label='cluster 1')
+    l3 =plt.plot(x_list_3 ,y_list_3 ,alpha=0.8, color=cluster_1_color,linestyle='-', zorder=3 )
+    l4 =plt.plot(x_list_4 ,y_list_4 ,alpha=0.8, color=cluster_1_color,linestyle='-', zorder=3 )
+    l5 =plt.plot(x_list_5 ,y_list_5 ,alpha=0.8, color=cluster_1_color,linestyle='-', zorder=3 )
+#    l6 =plt.plot(x_list_6 ,y_list_6 ,alpha=0.5, color=cluster_1_color,linestyle='--')
+#    l7 =plt.plot(x_list_7 ,y_list_7 ,alpha=0.5, color=cluster_1_color,linestyle='--')
+#    l8 =plt.plot(x_list_8 ,y_list_8 ,alpha=0.5, color=cluster_1_color,linestyle='--')
+#    l9 =plt.plot(x_list_9 ,y_list_9 ,alpha=0.5, color=cluster_1_color,linestyle='--')
+#    l10=plt.plot(x_list_10,y_list_10,alpha=0.5, color=cluster_1_color,linestyle='--')
+    #l4=fig1.scatter(x_list_2,y_list_2,color='y',linestyle='--',marker=',')
+    #l5=fig1.scatter(x_list_2,y_list_2,color='r',linestyle='--',marker=',')
+    #l6=fig1.scatter(x_list_2,y_list_2,color='c',linestyle='--',marker=',')
+    #fig1.scatter(x_list_2,y_list_2,color='m',linestyle='--',marker=',')
+    #plt.legend(loc = 'upper left')
+
+
+    model.load_weights('cluster_2.h5') 
+    predic_model_2 = Model(inputs =input_data, outputs = predictions)
+ 
+
+    y_test = predic_model_2.predict(x_test)
     raw_predic_data = np.concatenate((y_test,x_test),axis=1)
     
     #print "raw_predic_data="+str(raw_predic_data)
@@ -489,136 +505,159 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     x_list_1 = raw_data[:,2] 
     y_list_1 = raw_data[:,0]
     
-    raw_predic_data_4 = raw_predic_data[np.where(raw_predic_data[:,1]==4)]
-    raw_predic_data_8 = raw_predic_data[np.where(raw_predic_data[:,1]==8)]
-    raw_predic_data_12 = raw_predic_data[np.where(raw_predic_data[:,1]==12)]
-    raw_predic_data_20 = raw_predic_data[np.where(raw_predic_data[:,1]==20)]
-    raw_predic_data_40 = raw_predic_data[np.where(raw_predic_data[:,1]==40)]
-    raw_predic_data_60 = raw_predic_data[np.where(raw_predic_data[:,1]==100)]
-    
+    raw_predic_data_2  = raw_predic_data[np.where(raw_predic_data[:,1]==4)]
+    raw_predic_data_3  = raw_predic_data[np.where(raw_predic_data[:,1]==6)]
+    raw_predic_data_4  = raw_predic_data[np.where(raw_predic_data[:,1]==8)]
+    raw_predic_data_5  = raw_predic_data[np.where(raw_predic_data[:,1]==10)]
+    raw_predic_data_6  = raw_predic_data[np.where(raw_predic_data[:,1]==12)]
+    raw_predic_data_7  = raw_predic_data[np.where(raw_predic_data[:,1]==14)]
+    raw_predic_data_8  = raw_predic_data[np.where(raw_predic_data[:,1]==16)]
+    raw_predic_data_9  = raw_predic_data[np.where(raw_predic_data[:,1]==18)]
+    raw_predic_data_10 = raw_predic_data[np.where(raw_predic_data[:,1]==20)]
+
+
     temp = (raw_predic_data[np.where(raw_predic_data[:,1]== 200)])
-    radius_converge = np.max(temp[:,0])
+    gs_converge = np.min(temp[:,0])
    
  
     
-    x_list_2 = raw_predic_data_4[:,2]
-    y_list_2 = raw_predic_data_4[:,0]
+    x_list_2 = raw_predic_data_2[:,2]
+    y_list_2 = raw_predic_data_2[:,0]
     
-    x_list_3 = raw_predic_data_8[:,2]
-    y_list_3 = raw_predic_data_8[:,0]
+    x_list_3 = raw_predic_data_3[:,2]
+    y_list_3 = raw_predic_data_3[:,0]
     
-    x_list_4 = raw_predic_data_12[:,2]
-    y_list_4 = raw_predic_data_12[:,0]
+    x_list_4 = raw_predic_data_4[:,2]
+    y_list_4 = raw_predic_data_4[:,0]
     
-    x_list_5 = raw_predic_data_20[:,2]
-    y_list_5 = raw_predic_data_20[:,0]
-    
-    
-    x_list_6 = raw_predic_data_40[:,2]
-    y_list_6 = raw_predic_data_40[:,0]
-    
-    x_list_7 = raw_predic_data_60[:,2]
-    y_list_7 = raw_predic_data_60[:,0]
+    x_list_5 = raw_predic_data_5[:,2]
+    y_list_5 = raw_predic_data_5[:,0]
     
     
-    fig1 = plt.figure('fig1')
-    ax = plt.subplot(111)
-    l1=plt.scatter(x_list_1,y_list_1,color='k',linestyle='--',s = 10, marker = 'x', label='CC_calculation')
-    l2=plt.plot(x_list_2,y_list_2,color='y',linestyle='--',label='NN_Nmax_4')
-    l3=plt.plot(x_list_3,y_list_3,color='r',linestyle='--',label='NN_Nmax_8')
-    l4=plt.plot(x_list_4,y_list_4,color='g',linestyle='--',label='NN_Nmax_12')
-    l5=plt.plot(x_list_5,y_list_5,color='c',linestyle='--',label='NN_Nmax_20')
+    x_list_6 = raw_predic_data_6[:,2]
+    y_list_6 = raw_predic_data_6[:,0]
     
-    l6=plt.plot(x_list_6,y_list_6,color='m',linestyle='--',label='NN_Nmax_40')
-    l7=plt.plot(x_list_7,y_list_7,color='b',linestyle='--',label='NN_Nmax_100')
-    #l4=fig1.scatter(x_list_2,y_list_2,color='y',linestyle='--',marker=',')
-    #l5=fig1.scatter(x_list_2,y_list_2,color='r',linestyle='--',marker=',')
-    #l6=fig1.scatter(x_list_2,y_list_2,color='c',linestyle='--',marker=',')
-    #fig1.scatter(x_list_2,y_list_2,color='m',linestyle='--',marker=',')
-    #plt.legend(loc = 'upper left')
+    x_list_7 = raw_predic_data_7[:,2]
+    y_list_7 = raw_predic_data_7[:,0]
+    
+    x_list_8 = raw_predic_data_8[:,2]
+    y_list_8 = raw_predic_data_8[:,0]
 
-    xmajorLocator   = MultipleLocator(10)
-    #xmajorFormatter = FormatStrFormatter('%5f')
-    xminorLocator   = MultipleLocator(2)
+    x_list_9 = raw_predic_data_9[:,2]
+    y_list_9 = raw_predic_data_9[:,0]
+ 
+    x_list_10= raw_predic_data_10[:,2]
+    y_list_10= raw_predic_data_10[:,0]
+ 
     
-    
-    ymajorLocator   = MultipleLocator(5)
-    #ymajorFormatter = FormatStrFormatter('%1.1d')
-    yminorLocator   = MultipleLocator(1)
+    cluster_2_color = 'orange'
+    ll2 = plt.plot(x_list_2 ,y_list_2 ,alpha=0.8, color=cluster_2_color,linestyle='--',zorder=2 ,label='cluster 2')
+    ll3 = plt.plot(x_list_3 ,y_list_3 ,alpha=0.8, color=cluster_2_color,linestyle='--',zorder=2 )
+    ll4 = plt.plot(x_list_4 ,y_list_4 ,alpha=0.8, color=cluster_2_color,linestyle='--',zorder=2 )
+    ll5 = plt.plot(x_list_5 ,y_list_5 ,alpha=0.8, color=cluster_2_color,linestyle='--',zorder=2 )
+#    ll6 = plt.plot(x_list_6 ,y_list_6 ,alpha=0.5, color=cluster_2_color,linestyle=':')
+#    ll7 = plt.plot(x_list_7 ,y_list_7 ,alpha=0.5, color=cluster_2_color,linestyle=':')
+#    ll8 = plt.plot(x_list_8 ,y_list_8 ,alpha=0.5, color=cluster_2_color,linestyle=':')
+#    ll9 = plt.plot(x_list_9 ,y_list_9 ,alpha=0.5, color=cluster_2_color,linestyle=':')
+#    ll10= plt.plot(x_list_10,y_list_10,alpha=0.5, color=cluster_2_color,linestyle=':')
+ 
 
-    ax.xaxis.set_major_locator(xmajorLocator)
-    #ax.xaxis.set_major_formatter(xmajorFormatter)
-    ax.yaxis.set_major_locator(ymajorLocator)
-    #ax.yaxis.set_major_formatter(ymajorFormatter)
-    ax.xaxis.set_minor_locator(xminorLocator)
-    ax.yaxis.set_minor_locator(yminorLocator)
-    ax.xaxis.grid(True, which='major') 
-    ax.yaxis.grid(True, which='major')
-    
 
-    plt.legend(loc='upper right', bbox_to_anchor=(1.5,0.75),ncol=1,fancybox=True,shadow=True,borderaxespad = 0.)
-    plt.title("radius(infinite)="+str(radius_converge))
-    plot_path = 'radius.eps'
-    plt.ylim((1,3))  
-    plt.xlim((10,50))
-    plt.subplots_adjust(right = 0.7)
+
+
+
+
+
+
+#    xmajorLocator   = MultipleLocator(10)
+#    #xmajorFormatter = FormatStrFormatter('%5f')
+#    xminorLocator   = MultipleLocator(2)
+#    
+#    
+#    ymajorLocator   = MultipleLocator(1)
+#    #ymajorFormatter = FormatStrFormatter('%1.1d')
+#    yminorLocator   = MultipleLocator(1)
+#
+#    ax.xaxis.set_major_locator(xmajorLocator)
+#    #ax.xaxis.set_major_formatter(xmajorFormatter)
+#    ax.yaxis.set_major_locator(ymajorLocator)
+#    #ax.yaxis.set_major_formatter(ymajorFormatter)
+#    ax.xaxis.set_minor_locator(xminorLocator)
+#    ax.yaxis.set_minor_locator(yminorLocator)
+#    ax.xaxis.grid(True, which='major') 
+#    ax.yaxis.grid(True, which='major')
+    
+    plt.legend(loc='upper left',fancybox=True,shadow=True, prop = {'size':12})
+#    plt.title("gs(infinite)="+str(gs_converge))
+    plot_path = 'cluster_compare.eps'
+    plt.ylim((-28,-13))  
+    plt.xlim((15,75))
+    #plt.subplots_adjust(right = 0.7)
     plt.savefig(plot_path)
     plt.close('all')
     #fig1.show()
+
+
+
+
+
+
+
+
     
     
-    file_path = "radius_NN_prediction.txt"
-    with open(file_path,'w') as f_1:
-        for loop1 in range(1,count):
-            f_1.write('{:>-10.5f}'.format(y_test[loop1,0]))
-            f_1.write('{:>10}'.format(x_test[loop1,0]))
-            f_1.write('{:>10}'.format(x_test[loop1,1])+'\n')
-    os.system('cp '+file_path+' '+output_path)        
-    os.system('cp '+model_path+' '+output_path) 
-    os.system('cp '+'radius.eps'+' '+output_path) 
+#    file_path = "gs_NN_prediction.txt"
+#    with open(file_path,'w') as f_1:
+#        for loop1 in range(1,count):
+#            f_1.write('{:>-10.5f}'.format(y_test[loop1,0]))
+#            f_1.write('{:>10}'.format(x_test[loop1,0]))
+#            f_1.write('{:>10}'.format(x_test[loop1,1])+'\n')
+#    os.system('cp '+file_path+' '+output_path)        
+#    os.system('cp '+model_path+' '+output_path) 
+#    os.system('cp '+'gs.eps'+' '+output_path) 
 #    os.system('cp '+'loss_val_loss.eps'+' '+output_path) 
 #
 # plot different_hw.eps and lowest_each_Nmax.eps
 #
-    data_num = len(open(file_path,'rU').readlines())
-    raw_data = np.zeros((data_num,3),dtype = np.float)
-    input_file_2(file_path,raw_data)
-    
-    raw_data_new_4 = raw_data[np.where(raw_data[:,2] == 50 )]
-    raw_data_new_3 = raw_data[np.where(raw_data[:,2] == 40 )]
-    raw_data_new_2 = raw_data[np.where(raw_data[:,2] == 30 )]
-    raw_data_new_1 = raw_data[np.where(raw_data[:,2] == 20 )]
-    
-    raw_data_new_5 = raw_data[np.where(raw_data[:,1] == 200)]
-    temp_1 = raw_data_new_5[:,0]
-    radius_converge = np.max(temp_1)
-    
-    raw_data_new = np.zeros((200,2),dtype = np.float)
-    for loop in range(0,200):
-        raw_data_new[loop,1] = loop+4
-        raw_data_new[loop,0] = np.min(raw_data[np.where(raw_data[:,1]==loop+4)])
-    
-    x_list = raw_data_new[:,1]
-    y_list = np.log10(raw_data_new[:,0] - radius_converge)
-    
-    x_list_1 = raw_data_new_1 [:,1]
-    y_list_1 = np.log10(raw_data_new_1[:,0] - radius_converge)
-    
-    x_list_2 = raw_data_new_2 [:,1]
-    y_list_2 = np.log10(raw_data_new_2[:,0] - radius_converge)
-    
-    x_list_3 = raw_data_new_3 [:,1]
-    y_list_3 = np.log10(raw_data_new_3[:,0] - radius_converge)
-    
-    x_list_4 = raw_data_new_4 [:,1]
-    y_list_4 = np.log10(raw_data_new_4[:,0] - radius_converge)
+#    data_num = len(open(file_path,'rU').readlines())
+#    raw_data = np.zeros((data_num,3),dtype = np.float)
+#    input_file_2(file_path,raw_data)
+#    
+#    raw_data_new_4 = raw_data[np.where(raw_data[:,2] == 50 )]
+#    raw_data_new_3 = raw_data[np.where(raw_data[:,2] == 40 )]
+#    raw_data_new_2 = raw_data[np.where(raw_data[:,2] == 30 )]
+#    raw_data_new_1 = raw_data[np.where(raw_data[:,2] == 20 )]
+#    
+#    raw_data_new_5 = raw_data[np.where(raw_data[:,1] == 200)]
+#    temp_1 = raw_data_new_5[:,0]
+#    gs_converge = np.min(temp_1)
+#    
+#    raw_data_new = np.zeros((200,2),dtype = np.float)
+#    for loop in range(0,200):
+#        raw_data_new[loop,1] = loop+4
+#        raw_data_new[loop,0] = np.min(raw_data[np.where(raw_data[:,1]==loop+4)])
+#    
+#    x_list = raw_data_new[:,1]
+#    y_list = np.log10(raw_data_new[:,0] - gs_converge)
+#    
+#    x_list_1 = raw_data_new_1 [:,1]
+#    y_list_1 = np.log10(raw_data_new_1[:,0] - gs_converge)
+#    
+#    x_list_2 = raw_data_new_2 [:,1]
+#    y_list_2 = np.log10(raw_data_new_2[:,0] - gs_converge)
+#    
+#    x_list_3 = raw_data_new_3 [:,1]
+#    y_list_3 = np.log10(raw_data_new_3[:,0] - gs_converge)
+#    
+#    x_list_4 = raw_data_new_4 [:,1]
+#    y_list_4 = np.log10(raw_data_new_4[:,0] - gs_converge)
 #    fig_1 = plt.figure('fig_1')
 #    l1 = plt.scatter(x_list_1,y_list_1,color='k',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=20')
 #    l2 = plt.scatter(x_list_2,y_list_2,color='r',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=30')
 #    l3 = plt.scatter(x_list_3,y_list_3,color='g',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=40')
 #    l4 = plt.scatter(x_list_4,y_list_4,color='b',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=50')
 #    
-#    plt.title("E(converge)="+str(radius_converge))
+#    plt.title("E(converge)="+str(gs_converge))
 #    
 #    plt.ylabel("lg(E(infinte)-E(converge))")
 #    plt.legend(loc = 'lower left')
@@ -630,8 +669,8 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
 #    fig_2 = plt.figure('fig_2')
 #    l = plt.scatter(x_list,y_list,color='k',linestyle='--',s = 10, marker = 'x', label='E(infinite)')
 #    
-#    
-#    plt.title("E(converge)="+str(radius_converge))
+    
+#    plt.title("E(converge)="+str(gs_converge))
 #    plt.ylabel("lg(E(infinte)-E(converge))")
 #    plt.legend(loc = 'lower left')
 #    #plt.ylim((1.2,2.8))
@@ -640,10 +679,10 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
 #    plt.savefig(plot_path)
 #    #fig_2.show()
 #    plt.close('all') 
-#   # import plot_radius as plot
+#   # import plot_gs as plot
 #    os.system('cp '+'different_hw.eps'+' '+output_path) 
 #    os.system('cp '+'lowest_each_Nmax.eps'+' '+output_path) 
-    return radius_converge,loss,val_loss
+    return
 
 
 
@@ -651,14 +690,14 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
 # all NN parameters
 #
 nuclei = 'He4'
-target_option = 'radius'
-input_path = 'He4R_NNLOopt.txt'
-#output_path = './result/radius/'
+target_option = 'gs'
+input_path = 'He4E_NNLOopt.txt'
+#output_path = './result/gs/'
 data_num = input_raw_data_count(input_path)
-#print 'data_num='+str(data_num)
+print 'data_num='+str(data_num)
 # earlystopping parameters
 monitor  = 'loss'
-min_delta = 0.00000001
+min_delta = 0.0001
 patience = 50
 epochs = 10000
 batch_size = 32
@@ -668,47 +707,47 @@ output_dim = 1
 interpol_count = 10000
 hw_line = 2
 nmax_line = 1
-radius_line = 0
+gs_energy_line = 0
 run_times_start = 1 
 run_times_end   = 100
 #parameter for gaussian distribution of sample_weight
-sample_weight_switch = 'on'
-FWHM_percent = 0.7
-
-#sigma = FWHM/2.355 
+sample_weight_switch = 'off'
+FWHM = 100
+sigma = FWHM/2.355 
 #correlate parameters
 corr_num   = 2
 corr_weight= 1.
 
 
-radius_converge_all = np.zeros(run_times_end)
-loss_all = np.zeros(run_times_end)
-val_loss_all = np.zeros(run_times_end)
 
-os.system('mkdir '+nuclei)
-os.system('mkdir '+nuclei+'/'+target_option)        
+#os.system('mkdir '+nuclei)
+#os.system('mkdir '+nuclei+'/'+target_option)        
 
 
-for max_nmax_fit in range(10,11,2):
-    os.system('mkdir '+nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit))
-    with open(nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit)+'/'+'radius_NN_info.txt','a') as f_3:
-        #f_3.read()
-        f_3.write('################################################################'+'\n')
-        f_3.write('# loop   radius            loss                  val_loss'+'\n')
-    for loop_all in range(run_times_start-1,run_times_end):
-        os.system('mkdir '+nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit)+'/'+str(loop_all+1))
-        output_path = nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit)+'/'+str(loop_all+1)
-        radius_converge_all[loop_all],loss_all[loop_all],val_loss_all[loop_all] = NN_all(input_path=input_path,output_path=output_path,data_num=data_num,monitor=monitor,min_delta=min_delta,patience=patience,epochs=epochs,batch_size=batch_size,input_dim=input_dim,output_dim=output_dim,interpol_count=interpol_count,max_nmax_fit=max_nmax_fit,FWHM_percent=FWHM_percent)
-        with open(nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit)+'/'+'radius_NN_info.txt','a') as f_3:
-            #f_3.read()
-            f_3.write('{:>5}'.format(loop_all+1)+'   ')
-            f_3.write('{:>-10.5f}'.format(radius_converge_all[loop_all])+'   ')
-            f_3.write('{:>-20.15f}'.format(loss_all[loop_all])+'   ')
-            f_3.write('{:>-20.15f}'.format(val_loss_all[loop_all])+'\n')
+#for max_nmax_fit in range(12,15,2):
+#    os.system('mkdir '+nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit))
+#    with open(nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit)+'/'+'gs_NN_info.txt','a') as f_3:
+#        #f_3.read()
+#        f_3.write('################################################################'+'\n')
+#        f_3.write('# loop   gs_energy            loss                  val_loss'+'\n')
+#    for loop_all in range(run_times_start-1,run_times_end):
+#        os.system('mkdir '+nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit)+'/'+str(loop_all+1))
+#        output_path = nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit)+'/'+str(loop_all+1)
+#        gs_converge_all[loop_all],loss_all[loop_all],val_loss_all[loop_all] = NN_all(input_path=input_path,output_path=output_path,data_num=data_num,monitor=monitor,min_delta=min_delta,patience=patience,epochs=epochs,batch_size=batch_size,input_dim=input_dim,output_dim=output_dim,interpol_count=interpol_count,max_nmax_fit=max_nmax_fit,sigma=sigma)
+#        with open(nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit)+'/'+'gs_NN_info.txt','a') as f_3:
+#            #f_3.read()
+#            f_3.write('{:>5}'.format(loop_all+1)+'   ')
+#            f_3.write('{:>-10.5f}'.format(gs_converge_all[loop_all])+'   ')
+#            f_3.write('{:>-20.15f}'.format(loss_all[loop_all])+'   ')
+#            f_3.write('{:>-20.15f}'.format(val_loss_all[loop_all])+'\n')
+max_nmax_fit = 20
+output_path = './'
+
+NN_all(input_path=input_path,output_path=output_path,data_num=data_num,monitor=monitor,min_delta=min_delta,patience=patience,epochs=epochs,batch_size=batch_size,input_dim=input_dim,output_dim=output_dim,interpol_count=interpol_count,max_nmax_fit=max_nmax_fit,sigma=sigma)
 
 
     
-#print 'radius_converge_all='+str(radius_converge_all)
+#print 'gs_converge_all='+str(gs_converge_all)
 
 
-#input()
+#input()G
