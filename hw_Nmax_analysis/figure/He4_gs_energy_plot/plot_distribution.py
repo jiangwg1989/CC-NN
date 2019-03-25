@@ -23,7 +23,6 @@ def input_file_2(file_path,raw_data):
                 raw_data[loop2][2] = float(temp_1[3])
                 loop2 = loop2 + 1
             loop1 = loop1 + 1
-        print loop2
 
 ##########################################################
 ##########################################################
@@ -175,7 +174,7 @@ plt.ylim((y_lim_min,y_lim_max))
 #########################################################
 ## corr_loss Nmax16
 #########################################################
-file_path = "gs_NN_info_corr_He4_14.txt"
+file_path = "gs_NN_info_corr_He4_16.txt"
 data_num = len(open(file_path,'rU').readlines())
 raw_data = np.zeros((data_num,3),dtype = np.float)
 input_file_2(file_path,raw_data)
@@ -208,7 +207,7 @@ plt.ylim((y_lim_min,y_lim_max))
 #########################################################
 ## corr_loss Nmax18
 #########################################################
-file_path = "gs_NN_info_corr_He4_14.txt"
+file_path = "gs_NN_info_corr_He4_16.txt"
 data_num = len(open(file_path,'rU').readlines())
 raw_data = np.zeros((data_num,3),dtype = np.float)
 input_file_2(file_path,raw_data)
@@ -242,7 +241,7 @@ plt.ylim((y_lim_min,y_lim_max))
 #########################################################
 ## corr_loss Nmax20
 #########################################################
-file_path = "gs_NN_info_corr_He4_14.txt"
+file_path = "gs_NN_info_corr_He4_20.txt"
 data_num = len(open(file_path,'rU').readlines())
 raw_data = np.zeros((data_num,3),dtype = np.float)
 input_file_2(file_path,raw_data)
@@ -275,7 +274,7 @@ plt.ylim((y_lim_min,y_lim_max))
 
 
 
-plot_path = 'multi-NN_distribution.eps'
+plot_path = 'multi-NN_distribution.pdf'
 plt.savefig(plot_path)
 #fig_2.show()
 

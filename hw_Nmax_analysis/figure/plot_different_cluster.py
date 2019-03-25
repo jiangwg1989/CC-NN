@@ -473,7 +473,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     
     fig1 = plt.figure('fig1')
     ax = plt.subplot(111)
-    cluster_1_color = 'forestgreen'
+    cluster_1_color = 'green'
     l1=plt.scatter(x_list_1,y_list_1,color='k',linestyle='--',s = 18, marker = 'x', zorder= 4,label=r'$\rm{NNLO}_{\rm{opt}}$')
     l2 =plt.plot(x_list_2 ,y_list_2 ,alpha=0.8, color=cluster_1_color,linestyle='-', zorder=3 ,label='cluster 1')
     l3 =plt.plot(x_list_3 ,y_list_3 ,alpha=0.8, color=cluster_1_color,linestyle='-', zorder=3 )
@@ -550,7 +550,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     y_list_10= raw_predic_data_10[:,0]
  
     
-    cluster_2_color = 'orange'
+    cluster_2_color = 'crimson'
     ll2 = plt.plot(x_list_2 ,y_list_2 ,alpha=0.8, color=cluster_2_color,linestyle='--',zorder=2 ,label='cluster 2')
     ll3 = plt.plot(x_list_3 ,y_list_3 ,alpha=0.8, color=cluster_2_color,linestyle='--',zorder=2 )
     ll4 = plt.plot(x_list_4 ,y_list_4 ,alpha=0.8, color=cluster_2_color,linestyle='--',zorder=2 )
