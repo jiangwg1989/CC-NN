@@ -519,7 +519,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
 #    l7 =plt.plot(x_list_7 ,y_list_7 ,alpha=0.5, color=cluster_1_color,linestyle='--')
 #    l8 =plt.plot(x_list_8 ,y_list_8 ,alpha=0.5, color=cluster_1_color,linestyle='--')
 #    l9 =plt.plot(x_list_9 ,y_list_9 ,alpha=0.5, color=cluster_1_color,linestyle='--')
-#    l10=plt.plot(x_list_10,y_list_10,alpha=0.5, color=cluster_1_color,linestyle='--')
+    ax1.plot(x_list_10,y_list_10,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='--', zorder=3)
     #l4=fig1.scatter(x_list_2,y_list_2,color='y',linestyle='--',marker=',')
     #l5=fig1.scatter(x_list_2,y_list_2,color='r',linestyle='--',marker=',')
     #l6=fig1.scatter(x_list_2,y_list_2,color='c',linestyle='--',marker=',')
@@ -628,7 +628,6 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     
     ax1.legend(loc='upper left',fancybox=True,shadow=True, prop = {'size':10})
 #    plt.title("gs(infinite)="+str(gs_converge))
-    plot_path = 'cluster_compare.pdf'
     ax1.set_ylim((-28,-13))  
     ax1.set_xlim((15,80.001))
     y_ticks = ax1.set_yticks(np.arange(-28,-13,2.5))
@@ -639,6 +638,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     ax1.set_ylabel(r'$ E_{gs} \quad \rm{(MeV)}$',fontsize=12,labelpad =-1)
     #plt.subplots_adjust(right = 0.7)
 
+    plot_path = 'multi_NN.eps'
     fig_1.tight_layout()
     plt.savefig(plot_path)
     plt.close('all')
