@@ -43,7 +43,6 @@ def input_file_1(file_path,raw_data,gs_energy_line,nmax_line,hw_line):
                 raw_data[loop2][2] = float(temp_1[hw_line])
                 loop2 = loop2 + 1
             loop1 = loop1 + 1
-        print loop2  
 
 def input_file_2(file_path,raw_data):
     count = len(open(file_path,'rU').readlines())
@@ -164,7 +163,6 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
     raw_data_new  = data_interpolation[np.where((data_interpolation[:,1]<=max_nmax_fit))]
     #raw_data_new = data_interpolation[np.where((data_interpolation[:,1]<=max_nmax_fit)&(data_interpolation[:,2]<=60))]
     #raw_data_new = data_interpolation
-    print "raw_data_new="+str(raw_data_new)
     
     x_train = raw_data_new[:,1:3]
     y_train = raw_data_new[:,0]
@@ -218,11 +216,11 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
     loss = history.history['loss'][len(history.history['loss'])-1]
     val_loss = history.history['val_loss'][len(history.history['val_loss'])-1]
     
-    fig4 = plt.figure('fig4')
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-    #plt.savefig('loss_val_loss.eps')
-    plt.close('all')
+#    fig4 = plt.figure('fig4')
+#    plt.plot(history.history['loss'])
+#    plt.plot(history.history['val_loss'])
+#    #plt.savefig('loss_val_loss.eps')
+#    plt.close('all')
 
 
     model_path = 'gs.h5' 
@@ -347,7 +345,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
     os.system('cp '+file_path+' '+output_path)        
     os.system('cp '+model_path+' '+output_path) 
     os.system('cp '+'gs.eps'+' '+output_path) 
-    os.system('cp '+'loss_val_loss.eps'+' '+output_path) 
+#    os.system('cp '+'loss_val_loss.eps'+' '+output_path) 
 #
 # plot different_hw.eps and lowest_each_Nmax.eps
 #
@@ -383,37 +381,37 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
     
     x_list_4 = raw_data_new_4 [:,1]
     y_list_4 = np.log10(raw_data_new_4[:,0] - gs_converge)
-    fig_1 = plt.figure('fig_1')
-    l1 = plt.scatter(x_list_1,y_list_1,color='k',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=20')
-    l2 = plt.scatter(x_list_2,y_list_2,color='r',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=30')
-    l3 = plt.scatter(x_list_3,y_list_3,color='g',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=40')
-    l4 = plt.scatter(x_list_4,y_list_4,color='b',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=50')
-    
-    plt.title("E(converge)="+str(gs_converge))
-    
-    plt.ylabel("lg(E(infinte)-E(converge))")
-    plt.legend(loc = 'lower left')
-    #plt.ylim((1.2,2.8))
-    #plt.savefig('Li6_radius_NN_prediction.jpg')
-    plot_path = 'different_hw.eps'
-    plt.savefig(plot_path)
-    #fig_1.show()
-    fig_2 = plt.figure('fig_2')
-    l = plt.scatter(x_list,y_list,color='k',linestyle='--',s = 10, marker = 'x', label='E(infinite)')
-    
-    
-    plt.title("E(converge)="+str(gs_converge))
-    plt.ylabel("lg(E(infinte)-E(converge))")
-    plt.legend(loc = 'lower left')
-    #plt.ylim((1.2,2.8))
-    #plt.savefig('Li6_radius_NN_prediction.jpg')
-    plot_path = 'lowest_each_Nmax.eps'
-    plt.savefig(plot_path)
-    #fig_2.show()
-    plt.close('all') 
-   # import plot_gs as plot
-    os.system('cp '+'different_hw.eps'+' '+output_path) 
-    os.system('cp '+'lowest_each_Nmax.eps'+' '+output_path) 
+#    fig_1 = plt.figure('fig_1')
+#    l1 = plt.scatter(x_list_1,y_list_1,color='k',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=20')
+#    l2 = plt.scatter(x_list_2,y_list_2,color='r',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=30')
+#    l3 = plt.scatter(x_list_3,y_list_3,color='g',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=40')
+#    l4 = plt.scatter(x_list_4,y_list_4,color='b',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=50')
+#    
+#    plt.title("E(converge)="+str(gs_converge))
+#    
+#    plt.ylabel("lg(E(infinte)-E(converge))")
+#    plt.legend(loc = 'lower left')
+#    #plt.ylim((1.2,2.8))
+#    #plt.savefig('Li6_radius_NN_prediction.jpg')
+#    plot_path = 'different_hw.eps'
+#    plt.savefig(plot_path)
+#    #fig_1.show()
+#    fig_2 = plt.figure('fig_2')
+#    l = plt.scatter(x_list,y_list,color='k',linestyle='--',s = 10, marker = 'x', label='E(infinite)')
+#    
+#    
+#    plt.title("E(converge)="+str(gs_converge))
+#    plt.ylabel("lg(E(infinte)-E(converge))")
+#    plt.legend(loc = 'lower left')
+#    #plt.ylim((1.2,2.8))
+#    #plt.savefig('Li6_radius_NN_prediction.jpg')
+#    plot_path = 'lowest_each_Nmax.eps'
+#    plt.savefig(plot_path)
+#    #fig_2.show()
+#    plt.close('all') 
+#   # import plot_gs as plot
+#    os.system('cp '+'different_hw.eps'+' '+output_path) 
+#    os.system('cp '+'lowest_each_Nmax.eps'+' '+output_path) 
     return gs_converge,loss,val_loss
 
 
@@ -426,11 +424,11 @@ target_option = 'gs'
 input_path = 'He4E_NNLOopt.txt'
 #output_path = './result/gs/'
 data_num = input_raw_data_count(input_path)
-print 'data_num='+str(data_num)
+#print 'data_num='+str(data_num)
 # earlystopping parameters
 monitor  = 'loss'
 min_delta = 0.0001
-patience = 20
+patience = 30
 epochs = 10000
 input_dim = 2 
 output_dim = 1
@@ -442,7 +440,7 @@ gs_energy_line = 0
 run_times_start = 1 
 run_times_end   = 100
 #parameter for gaussian distribution of sample_weight
-FWHM = 100
+FWHM = 20
 sigma = FWHM/2.355 
 
 gs_converge_all = np.zeros(run_times_end)
@@ -453,7 +451,7 @@ os.system('mkdir '+nuclei)
 os.system('mkdir '+nuclei+'/'+target_option)        
 
 
-for max_nmax_fit in range(20,21,2):
+for max_nmax_fit in range(10,11,2):
     os.system('mkdir '+nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit))
     with open(nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit)+'/'+'gs_NN_info.txt','a') as f_3:
         #f_3.read()
@@ -472,7 +470,6 @@ for max_nmax_fit in range(20,21,2):
 
 
     
-print 'gs_converge_all='+str(gs_converge_all)
 
 
 #input()
