@@ -308,7 +308,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     #
     data_new   =  data_new[np.where((data_new[:,1]<=max_nmax_fit))]
     
-#### test wtf!!!
+#### test wtf!!!!!!
     data_new   =  data_new[np.where((data_new[:,2]>20))]
 
 
