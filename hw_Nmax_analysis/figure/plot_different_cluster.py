@@ -17,7 +17,7 @@ import keras.losses
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 from keras.models import Sequential
 from keras.utils import np_utils
-from keras.layers import Input, Dense, Dropout, Activation, Merge, Multiply
+from keras.layers import Input, Dense, Dropout, Activation, Multiply
 from keras.models import Model
 from keras import optimizers
 from keras.optimizers import RMSprop
@@ -98,7 +98,6 @@ def input_file_1(file_path,raw_data,gs_energy_line,nmax_line,hw_line):
                 raw_data[loop2][4] = 1
                 loop2 = loop2 + 1
             loop1 = loop1 + 1
-        print loop2  
 
 def input_file_2(file_path,raw_data):
     count = len(open(file_path,'rU').readlines())
@@ -154,7 +153,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     kind = "quadratic"
     nmax_max = int(np.max(raw_data[:,1]))
     nmax_min = int(np.min(raw_data[:,1]))
-    nmax_count = (nmax_max-nmax_min)/2 + 1
+    nmax_count = int((nmax_max-nmax_min)/2 + 1)
     x_new = np.zeros((nmax_count,interpol_count))
     y_new = np.zeros((nmax_count,interpol_count))
     interpol_count_tot = 0   
@@ -474,11 +473,12 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     fig1 = plt.figure('fig1')
     ax = plt.subplot(111)
     cluster_1_color = 'green'
-    l1=plt.scatter(x_list_1,y_list_1,color='k',linestyle='--',s = 18, marker = 'x', zorder= 4,label=r'$\rm{NNLO}_{\rm{opt}}$')
-    l2 =plt.plot(x_list_2 ,y_list_2 ,alpha=0.8, color=cluster_1_color,linestyle='-', zorder=3 ,label='cluster 1')
-    l3 =plt.plot(x_list_3 ,y_list_3 ,alpha=0.8, color=cluster_1_color,linestyle='-', zorder=3 )
-    l4 =plt.plot(x_list_4 ,y_list_4 ,alpha=0.8, color=cluster_1_color,linestyle='-', zorder=3 )
-    l5 =plt.plot(x_list_5 ,y_list_5 ,alpha=0.8, color=cluster_1_color,linestyle='-', zorder=3 )
+    line_width = 3
+    l1=plt.scatter(x_list_1,y_list_1,color='k',lw=2.2,linestyle='--',s = 40, marker = 'x', zorder= 4,label=r'$\rm{NNLO}_{\rm{opt}}$')
+    l2 =plt.plot(x_list_2 ,y_list_2 ,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='-', zorder=3 ,label='cluster 1')
+    l3 =plt.plot(x_list_3 ,y_list_3 ,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='-', zorder=3 )
+    l4 =plt.plot(x_list_4 ,y_list_4 ,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='-', zorder=3 )
+    l5 =plt.plot(x_list_5 ,y_list_5 ,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='-', zorder=3 )
 #    l6 =plt.plot(x_list_6 ,y_list_6 ,alpha=0.5, color=cluster_1_color,linestyle='--')
 #    l7 =plt.plot(x_list_7 ,y_list_7 ,alpha=0.5, color=cluster_1_color,linestyle='--')
 #    l8 =plt.plot(x_list_8 ,y_list_8 ,alpha=0.5, color=cluster_1_color,linestyle='--')
@@ -551,10 +551,10 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
  
     
     cluster_2_color = 'crimson'
-    ll2 = plt.plot(x_list_2 ,y_list_2 ,alpha=0.8, color=cluster_2_color,linestyle='--',zorder=2 ,label='cluster 2')
-    ll3 = plt.plot(x_list_3 ,y_list_3 ,alpha=0.8, color=cluster_2_color,linestyle='--',zorder=2 )
-    ll4 = plt.plot(x_list_4 ,y_list_4 ,alpha=0.8, color=cluster_2_color,linestyle='--',zorder=2 )
-    ll5 = plt.plot(x_list_5 ,y_list_5 ,alpha=0.8, color=cluster_2_color,linestyle='--',zorder=2 )
+    ll2 = plt.plot(x_list_2 ,y_list_2 ,alpha=0.8,lw=line_width, color=cluster_2_color,linestyle='--',zorder=2 ,label='cluster 2')
+    ll3 = plt.plot(x_list_3 ,y_list_3 ,alpha=0.8,lw=line_width, color=cluster_2_color,linestyle='--',zorder=2 )
+    ll4 = plt.plot(x_list_4 ,y_list_4 ,alpha=0.8,lw=line_width, color=cluster_2_color,linestyle='--',zorder=2 )
+    ll5 = plt.plot(x_list_5 ,y_list_5 ,alpha=0.8,lw=line_width, color=cluster_2_color,linestyle='--',zorder=2 )
 #    ll6 = plt.plot(x_list_6 ,y_list_6 ,alpha=0.5, color=cluster_2_color,linestyle=':')
 #    ll7 = plt.plot(x_list_7 ,y_list_7 ,alpha=0.5, color=cluster_2_color,linestyle=':')
 #    ll8 = plt.plot(x_list_8 ,y_list_8 ,alpha=0.5, color=cluster_2_color,linestyle=':')
@@ -586,102 +586,24 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
 #    ax.yaxis.set_minor_locator(yminorLocator)
 #    ax.xaxis.grid(True, which='major') 
 #    ax.yaxis.grid(True, which='major')
-    
-    plt.legend(loc='upper left',fancybox=True,shadow=True, prop = {'size':12})
+        
+    plt.legend( bbox_to_anchor=(0.05,1), loc='upper left',fancybox=True,shadow=True, prop = {'size':15})
 #    plt.title("gs(infinite)="+str(gs_converge))
     plot_path = 'cluster_compare.eps'
     plt.ylim((-28,-13))  
     plt.xlim((15,75))
+    plt.xticks(fontsize=18)
+    plt.yticks(fontsize=18)
+    plt.xlabel(r"$\hbar \omega \ \rm(MeV)$",fontsize=18)
+    plt.ylabel(r"$E_{gs}\ \rm(MeV)$",fontsize=18)
     #plt.subplots_adjust(right = 0.7)
+    fig1.tight_layout()
     plt.savefig(plot_path)
     plt.close('all')
     #fig1.show()
 
 
 
-
-
-
-
-
-    
-    
-#    file_path = "gs_NN_prediction.txt"
-#    with open(file_path,'w') as f_1:
-#        for loop1 in range(1,count):
-#            f_1.write('{:>-10.5f}'.format(y_test[loop1,0]))
-#            f_1.write('{:>10}'.format(x_test[loop1,0]))
-#            f_1.write('{:>10}'.format(x_test[loop1,1])+'\n')
-#    os.system('cp '+file_path+' '+output_path)        
-#    os.system('cp '+model_path+' '+output_path) 
-#    os.system('cp '+'gs.eps'+' '+output_path) 
-#    os.system('cp '+'loss_val_loss.eps'+' '+output_path) 
-#
-# plot different_hw.eps and lowest_each_Nmax.eps
-#
-#    data_num = len(open(file_path,'rU').readlines())
-#    raw_data = np.zeros((data_num,3),dtype = np.float)
-#    input_file_2(file_path,raw_data)
-#    
-#    raw_data_new_4 = raw_data[np.where(raw_data[:,2] == 50 )]
-#    raw_data_new_3 = raw_data[np.where(raw_data[:,2] == 40 )]
-#    raw_data_new_2 = raw_data[np.where(raw_data[:,2] == 30 )]
-#    raw_data_new_1 = raw_data[np.where(raw_data[:,2] == 20 )]
-#    
-#    raw_data_new_5 = raw_data[np.where(raw_data[:,1] == 200)]
-#    temp_1 = raw_data_new_5[:,0]
-#    gs_converge = np.min(temp_1)
-#    
-#    raw_data_new = np.zeros((200,2),dtype = np.float)
-#    for loop in range(0,200):
-#        raw_data_new[loop,1] = loop+4
-#        raw_data_new[loop,0] = np.min(raw_data[np.where(raw_data[:,1]==loop+4)])
-#    
-#    x_list = raw_data_new[:,1]
-#    y_list = np.log10(raw_data_new[:,0] - gs_converge)
-#    
-#    x_list_1 = raw_data_new_1 [:,1]
-#    y_list_1 = np.log10(raw_data_new_1[:,0] - gs_converge)
-#    
-#    x_list_2 = raw_data_new_2 [:,1]
-#    y_list_2 = np.log10(raw_data_new_2[:,0] - gs_converge)
-#    
-#    x_list_3 = raw_data_new_3 [:,1]
-#    y_list_3 = np.log10(raw_data_new_3[:,0] - gs_converge)
-#    
-#    x_list_4 = raw_data_new_4 [:,1]
-#    y_list_4 = np.log10(raw_data_new_4[:,0] - gs_converge)
-#    fig_1 = plt.figure('fig_1')
-#    l1 = plt.scatter(x_list_1,y_list_1,color='k',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=20')
-#    l2 = plt.scatter(x_list_2,y_list_2,color='r',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=30')
-#    l3 = plt.scatter(x_list_3,y_list_3,color='g',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=40')
-#    l4 = plt.scatter(x_list_4,y_list_4,color='b',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=50')
-#    
-#    plt.title("E(converge)="+str(gs_converge))
-#    
-#    plt.ylabel("lg(E(infinte)-E(converge))")
-#    plt.legend(loc = 'lower left')
-#    #plt.ylim((1.2,2.8))
-#    #plt.savefig('Li6_radius_NN_prediction.jpg')
-#    plot_path = 'different_hw.eps'
-#    plt.savefig(plot_path)
-#    #fig_1.show()
-#    fig_2 = plt.figure('fig_2')
-#    l = plt.scatter(x_list,y_list,color='k',linestyle='--',s = 10, marker = 'x', label='E(infinite)')
-#    
-    
-#    plt.title("E(converge)="+str(gs_converge))
-#    plt.ylabel("lg(E(infinte)-E(converge))")
-#    plt.legend(loc = 'lower left')
-#    #plt.ylim((1.2,2.8))
-#    #plt.savefig('Li6_radius_NN_prediction.jpg')
-#    plot_path = 'lowest_each_Nmax.eps'
-#    plt.savefig(plot_path)
-#    #fig_2.show()
-#    plt.close('all') 
-#   # import plot_gs as plot
-#    os.system('cp '+'different_hw.eps'+' '+output_path) 
-#    os.system('cp '+'lowest_each_Nmax.eps'+' '+output_path) 
     return
 
 
@@ -694,7 +616,6 @@ target_option = 'gs'
 input_path = 'He4E_NNLOopt.txt'
 #output_path = './result/gs/'
 data_num = input_raw_data_count(input_path)
-print 'data_num='+str(data_num)
 # earlystopping parameters
 monitor  = 'loss'
 min_delta = 0.0001
