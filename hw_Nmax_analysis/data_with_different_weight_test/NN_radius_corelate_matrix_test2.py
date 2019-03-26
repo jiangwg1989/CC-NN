@@ -708,7 +708,6 @@ for max_nmax_fit in range(10,11,2):
 
 
     
-#print 'radius_converge_all='+str(radius_converge_all)
 
 
 #input()

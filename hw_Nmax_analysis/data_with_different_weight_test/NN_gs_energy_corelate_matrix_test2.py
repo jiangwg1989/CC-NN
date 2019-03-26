@@ -14,7 +14,7 @@ import tensorflow as tf
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 from keras.models import Sequential
 from keras.utils import np_utils
-from keras.layers import Input, Dense, Dropout, Activation, Merge, Multiply
+from keras.layers import Input, Dense, Dropout, Acn, Multiply
 from keras.models import Model
 from keras import optimizers
 from keras.optimizers import RMSprop
@@ -100,7 +100,6 @@ def input_file_1(file_path,raw_data,gs_energy_line,nmax_line,hw_line):
                 raw_data[loop2][4] = 1
                 loop2 = loop2 + 1
             loop1 = loop1 + 1
-        print loop2  
 
 def input_file_2(file_path,raw_data):
     count = len(open(file_path,'rU').readlines())
@@ -590,7 +589,6 @@ target_option = 'gs'
 input_path = 'He4E_NNLOopt.txt'
 #output_path = './result/gs/'
 data_num = input_raw_data_count(input_path)
-print 'data_num='+str(data_num)
 # earlystopping parameters
 monitor  = 'loss'
 min_delta = 0.0001
@@ -642,7 +640,6 @@ for max_nmax_fit in range(16,19,2):
 
 
     
-print 'gs_converge_all='+str(gs_converge_all)
 
 
 #input()
