@@ -166,7 +166,9 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
     
     x_train = raw_data_new[:,1:3]
     y_train = raw_data_new[:,0]
-    
+#    y_train = y_train*0   
+
+ 
     #print "x_train = "+str(x_train)
     #print "y_train = "+str(y_train)
     
@@ -176,11 +178,25 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
     def mse_loss(k):
         R = k[0]-k[1]
         A = K.mean(K.square(R))
+        #print(A)
+        #input()
         return A
+
+    def test_loss(k):
+        C = tf.zeros_like(k)
+        D = tf.ones_like(k)
+        R = (k[0]*C+D)*2-k[1] 
+        A = K.mean(K.square(R))
+        print(A)
+        #input()
+        return A 
+
 
     x = Dense(8, activation = 'sigmoid')(input_data)
     predictions = Dense(output_dim)(x)
     loss_layer = Lambda(mse_loss,name='mse_loss')([predictions,y_in])
+#    loss_layer = Lambda(test_loss,name='test_loss')([predictions,y_in])
+
 
     model = Model(inputs= [input_data,y_in], outputs = loss_layer)
         
@@ -208,7 +224,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
 #K.dot(y_true,y_pred)
  
 
-    model.compile(optimizer='adam',loss= lambda y_true, y_pred : y_pred)
+    model.compile(optimizer='sgd',loss= lambda y_true, y_pred : y_pred)
     
     early_stopping = EarlyStopping(monitor=monitor,min_delta = min_delta , patience=patience, verbose=0, mode='min')
     
@@ -440,7 +456,7 @@ gs_energy_line = 0
 run_times_start = 1 
 run_times_end   = 100
 #parameter for gaussian distribution of sample_weight
-FWHM = 20
+FWHM = 25
 sigma = FWHM/2.355 
 
 gs_converge_all = np.zeros(run_times_end)

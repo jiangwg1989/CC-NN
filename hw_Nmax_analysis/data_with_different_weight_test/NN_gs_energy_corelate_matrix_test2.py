@@ -14,7 +14,7 @@ import tensorflow as tf
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 from keras.models import Sequential
 from keras.utils import np_utils
-from keras.layers import Input, Dense, Dropout, Acn, Multiply
+from keras.layers import Input, Dense, Dropout, Activation, Multiply
 from keras.models import Model
 from keras import optimizers
 from keras.optimizers import RMSprop
@@ -376,7 +376,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     
     early_stopping = EarlyStopping(monitor=monitor,min_delta = min_delta , patience=patience, verbose=0, mode='min')
     
-    history = model.fit([x_train,y_train,c_position],y_train, epochs = epochs,batch_size=batch_size, validation_split = 0.01 , shuffle = 1, callbacks=[early_stopping], sample_weight = data_new[:,3])
+    history = model.fit([x_train,y_train,c_position],y_train, epochs = epochs,batch_size=batch_size, validation_split = 0.01 , shuffle = 1, callbacks=[early_stopping], sample_weight = data_new[:,3],verbose=0)
     loss = history.history['loss'][len(history.history['loss'])-1]
     val_loss = history.history['val_loss'][len(history.history['val_loss'])-1]
    
@@ -592,7 +592,7 @@ data_num = input_raw_data_count(input_path)
 # earlystopping parameters
 monitor  = 'loss'
 min_delta = 0.0001
-patience = 50
+patience = 30
 epochs = 10000
 batch_size = 32
 input_dim = 2 
@@ -605,11 +605,11 @@ gs_energy_line = 0
 run_times_start = 1 
 run_times_end   = 100
 #parameter for gaussian distribution of sample_weight
-sample_weight_switch = 'off'
-FWHM = 100
+sample_weight_switch = 'on'
+FWHM = 20
 sigma = FWHM/2.355 
 #correlate parameters
-corr_num   = 2
+corr_num   = 1
 corr_weight= 1.
 
 
@@ -621,7 +621,7 @@ os.system('mkdir '+nuclei)
 os.system('mkdir '+nuclei+'/'+target_option)        
 
 
-for max_nmax_fit in range(16,19,2):
+for max_nmax_fit in range(20,21,2):
     os.system('mkdir '+nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit))
     with open(nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit)+'/'+'gs_NN_info.txt','a') as f_3:
         #f_3.read()
