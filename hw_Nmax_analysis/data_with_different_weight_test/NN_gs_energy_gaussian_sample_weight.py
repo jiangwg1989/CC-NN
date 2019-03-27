@@ -98,7 +98,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
     kind = "quadratic"
     nmax_max = int(np.max(raw_data[:,1]))
     nmax_min = int(np.min(raw_data[:,1]))
-    nmax_count = (nmax_max-nmax_min)/2 + 1
+    nmax_count = int((nmax_max-nmax_min)/2 + 1)
     x_new = np.zeros((nmax_count,interpol_count))
     y_new = np.zeros((nmax_count,interpol_count))
     interpol_count_tot = 0   

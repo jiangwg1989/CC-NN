@@ -393,6 +393,12 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
 #    model.save(model_path)
 
 #    predic_model = Model(inputs =input_data, outputs = predictions)
+
+
+
+
+
+
 ####################
 # start plotting
 ####################
@@ -407,9 +413,8 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     matplotlib.rcParams['ytick.direction'] = 'in'
     plt.tick_params(top=True,bottom=True,left=True,right=True)
 
-    left, bottom, width,height = 0.26,0.60,0.32,0.33
-    ax1 = fig_1.add_axes([left,bottom,width,height])
-
+    #left, bottom, width,height = 0.26,0.60,0.32,0.33
+    #ax1 = fig_1.add_axes([left,bottom,width,height])
 
 #
 #   range ajustment
@@ -441,11 +446,11 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     df = pd.DataFrame(data, columns=["x", "y"])
 
     
-    g=sns.jointplot(x="x", y="y", data=df, kind="kde", color="g")
+    g=sns.jointplot(x="x", y="y", data=df, kind="kde", color="g",bbox =[3,0.1])
     g.plot_joint(plt.scatter, c="m", s=20, linewidth=1, marker="x")
     g.ax_joint.collections[0].set_alpha(0)  
     g.set_axis_labels("$X$", "$Y$")
-    g.ax_joint.legend_.remove()
+    #g.ax_joint.legend_.remove()
 
     
     #plt.title("He4_Multi-NN_Nmax4~20")
@@ -544,26 +549,26 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     y_list_10= raw_predic_data_10[:,0]
  
     
-#    left, bottom, width,height = 0.26,0.60,0.32,0.33
-#    ax1 = fig_1.add_axes([left,bottom,width,height])
-#
-#    cluster_1_color = 'green'
-#    line_width = 1.2
-#    l1=ax1.scatter(x_list_1,y_list_1,color='k',linestyle='--',s = 10,lw=1.2 , marker = 'x', zorder= 4,label=r'$\rm{NNLO}_{\rm{opt}}$')
-#    ax1.plot(x_list_2 ,y_list_2 ,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='--', zorder=3 ,label='NN prediction')
-#    ax1.plot(x_list_3 ,y_list_3 ,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='--', zorder=3 )
-#    ax1.plot(x_list_4 ,y_list_4 ,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='--', zorder=3 )
-#    ax1.plot(x_list_5 ,y_list_5 ,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='--', zorder=3 )
-##    l6 =plt.plot(x_list_6 ,y_list_6 ,alpha=0.5, color=cluster_1_color,linestyle='--')
-##    l7 =plt.plot(x_list_7 ,y_list_7 ,alpha=0.5, color=cluster_1_color,linestyle='--')
-##    l8 =plt.plot(x_list_8 ,y_list_8 ,alpha=0.5, color=cluster_1_color,linestyle='--')
-##    l9 =plt.plot(x_list_9 ,y_list_9 ,alpha=0.5, color=cluster_1_color,linestyle='--')
-#    ax1.plot(x_list_10,y_list_10,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='--', zorder=3)
-#    #l4=fig1.scatter(x_list_2,y_list_2,color='y',linestyle='--',marker=',')
-#    #l5=fig1.scatter(x_list_2,y_list_2,color='r',linestyle='--',marker=',')
-#    #l6=fig1.scatter(x_list_2,y_list_2,color='c',linestyle='--',marker=',')
-#    #fig1.scatter(x_list_2,y_list_2,color='m',linestyle='--',marker=',')
-#    #plt.legend(loc = 'upper left')
+    left, bottom, width,height = 0.26,0.60,0.32,0.33
+    ax1 = fig_1.add_axes([left,bottom,width,height])
+
+    cluster_1_color = 'green'
+    line_width = 1.2
+    l1=ax1.scatter(x_list_1,y_list_1,color='k',linestyle='--',s = 10,lw=1.2 , marker = 'x', zorder= 100,label=r'$\rm{NNLO}_{\rm{opt}}$')
+    ax1.plot(x_list_2 ,y_list_2 ,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='--', zorder=99 ,label='NN prediction')
+    ax1.plot(x_list_3 ,y_list_3 ,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='--', zorder=99 )
+    ax1.plot(x_list_4 ,y_list_4 ,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='--', zorder=99 )
+    ax1.plot(x_list_5 ,y_list_5 ,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='--', zorder=99 )
+#    l6 =plt.plot(x_list_6 ,y_list_6 ,alpha=0.5, color=cluster_1_color,linestyle='--')
+#    l7 =plt.plot(x_list_7 ,y_list_7 ,alpha=0.5, color=cluster_1_color,linestyle='--')
+#    l8 =plt.plot(x_list_8 ,y_list_8 ,alpha=0.5, color=cluster_1_color,linestyle='--')
+#    l9 =plt.plot(x_list_9 ,y_list_9 ,alpha=0.5, color=cluster_1_color,linestyle='--')
+    ax1.plot(x_list_10,y_list_10,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='--', zorder=3)
+    #l4=fig1.scatter(x_list_2,y_list_2,color='y',linestyle='--',marker=',')
+    #l5=fig1.scatter(x_list_2,y_list_2,color='r',linestyle='--',marker=',')
+    #l6=fig1.scatter(x_list_2,y_list_2,color='c',linestyle='--',marker=',')
+    #fig1.scatter(x_list_2,y_list_2,color='m',linestyle='--',marker=',')
+    #plt.legend(loc = 'upper left')
 #
 #
 #    
@@ -580,8 +585,8 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
 #    #plt.subplots_adjust(right = 0.7)
 #
     plot_path = 'multi_NN.pdf'
-#    fig_1.tight_layout()
-    plt.savefig(plot_path)
+    fig_1.tight_layout()
+    plt.savefig(plot_path,bbox_inches='tight')
     plt.close('all')
     #fig1.show()
 #

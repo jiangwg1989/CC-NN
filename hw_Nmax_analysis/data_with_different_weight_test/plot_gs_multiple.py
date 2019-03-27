@@ -22,7 +22,6 @@ def input_file_2(file_path,raw_data):
                 raw_data[loop2][2] = float(temp_1[3])
                 loop2 = loop2 + 1
             loop1 = loop1 + 1
-        print loop2
 
 
 file_path = "gs_NN_info.txt"
@@ -53,7 +52,6 @@ fig_1.show()
 raw_data_new_2 = raw_data_new[np.where((raw_data_new[:,0]>-28)&(raw_data_new[:,0]<-27.4))]
 x_list_1 = raw_data_new_2[:,0]
 
-print x_list_1
 
 fig_2 = plt.figure('fig_2')
 
