@@ -268,7 +268,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
     
     early_stopping = EarlyStopping(monitor=monitor,min_delta = min_delta , patience=patience, verbose=0, mode='min')
     
-    history = model.fit(x_train,y_train, epochs = epochs, validation_split = 0.01 , shuffle = 1,batch_size =32 , callbacks=[early_stopping], sample_weight = raw_data_new[:,3])
+    history = model.fit(x_train,y_train, epochs = epochs, validation_split = 0.01 , shuffle = 1,batch_size =32 , callbacks=[early_stopping], sample_weight = raw_data_new[:,3],verbose=0)
     loss = history.history['loss'][len(history.history['loss'])-1]
     val_loss = history.history['val_loss'][len(history.history['val_loss'])-1]
     
