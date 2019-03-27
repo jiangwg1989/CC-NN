@@ -510,7 +510,7 @@ os.system('mkdir '+nuclei+'/'+target_option)
 
 for max_nmax_fit in range(20,21,2):
     os.system('mkdir '+nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit))
-    with open(nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit)+'/'+'gs_NN_info.txt','a') as f_3:
+    with open(nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit)+'/'+'radius_NN_info.txt','a') as f_3:
         #f_3.read()
         f_3.write('#############################################'+'\n')
         f_3.write('# loop   radius          loss       val_loss'+'\n')
