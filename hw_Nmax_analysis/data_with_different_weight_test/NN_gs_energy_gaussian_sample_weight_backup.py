@@ -130,46 +130,11 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
         min_position[loop2] = x_new[loop2,np.where(y_new[loop2,:]==np.min(y_new[loop2,:]))]
 
 
-
-
-##
-##  second way of doing gussian sample weights, according to the cross point with last Nmax
-##
-# find the cross point of largest nmax with the last but one Nmax
-    x_cross_point = 0
-    y_cross_point = 0
-
-    raw_data_new = raw_data[np.where(raw_data[:,1]==(nmax_max))]
-    line_1_x = raw_data_new[:,2]
-    line_1_y = raw_data_new[:,0]
-    raw_data_new = raw_data[np.where(raw_data[:,1]==(nmax_max-2))]
-    line_2_x = raw_data_new[:,2]
-    line_2_y = raw_data_new[:,0]
-
-#   radius_range is the FWHM 
-    radius_range = (np.max(line_1_y)-np.min(line_1_y)+np.max(line_1_y)-np.min(line_1_y))/2.
-
-#  balance x and y
-    regulator = (np.max(line_1_x)-np.min(line_1_x)) / (np.max(line_1_y)-np.min(line_1_y))
-#    print(regulator)
-    temp_min = pow((line_1_x[0]/regulator-line_2_x[0]/regulator),2)+pow(line_1_y[0] - line_2_y[0],2)
-    for loop1 in range(0,len(line_1_x)):
-        for loop2 in range(0,len(line_1_x)):
-            temp = pow((line_1_x[loop1]/regulator-line_2_x[loop2]/regulator),2)+pow(line_1_y[loop1] - line_2_y[loop2],2) 
-            #print("temp="+str(temp))
-            if(temp < temp_min):
-                temp_min = temp
-                x_cross_point = line_1_x[loop1]#(line_1_x[loop1] + line_2_x[loop2])/2.
-                y_cross_point = line_1_y[loop1]#(line_1_y[loop1] + line_2_y[loop2])/2. 
-
-    print ("x_cross_point="+str(x_cross_point))
-    print ("y_cross_point="+str(y_cross_point))
-
     count = 0
     for loop2 in range(0,nmax_count):
          for loop3 in range(0,interpol_count):
              if(sample_weight_switch   == 'on'):
-                 data_interpolation[count,3] = normfun(y_new[loop2,loop3],y_cross_point,radius_range*FWHM_percent) 
+                 data_interpolation[count,3] = normfun(x_new[loop2,loop3],min_position[loop2],sigma) 
              elif(sample_weight_switch == 'off'):
                   data_interpolation[count,3] = 1 
              else:
@@ -490,7 +455,7 @@ gs_energy_line = 0
 run_times_start = 1 
 run_times_end   = 100
 #parameter for gaussian distribution of sample_weight
-
+sample_weight_switch = 'on'
 FWHM = 25
 sigma = FWHM/2.355
  
