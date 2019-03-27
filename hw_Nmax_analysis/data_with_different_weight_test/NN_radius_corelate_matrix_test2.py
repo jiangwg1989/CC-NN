@@ -689,7 +689,7 @@ os.system('mkdir '+nuclei)
 os.system('mkdir '+nuclei+'/'+target_option)        
 
 
-for max_nmax_fit in range(10,11,2):
+for max_nmax_fit in range(16,17,2):
     os.system('mkdir '+nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit))
     with open(nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit)+'/'+'radius_NN_info.txt','a') as f_3:
         #f_3.read()

@@ -43,7 +43,6 @@ def input_file_1(file_path,raw_data,gs_energy_line,nmax_line,hw_line):
                 raw_data[loop2][2] = float(temp_1[hw_line])
                 loop2 = loop2 + 1
             loop1 = loop1 + 1
-        print loop2  
 
 def input_file_2(file_path,raw_data):
     count = len(open(file_path,'rU').readlines())
@@ -99,7 +98,8 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
     kind = "quadratic"
     nmax_max = int(np.max(raw_data[:,1]))
     nmax_min = int(np.min(raw_data[:,1]))
-    nmax_count = (nmax_max-nmax_min)/2 + 1
+    nmax_count = int((nmax_max-nmax_min)/2 + 1)
+    print("nmax_count="+str(nmax_count))
     x_new = np.zeros((nmax_count,interpol_count))
     y_new = np.zeros((nmax_count,interpol_count))
     interpol_count_tot = 0   
@@ -164,7 +164,6 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
     raw_data_new  = data_interpolation[np.where((data_interpolation[:,1]<=max_nmax_fit))]
     #raw_data_new = data_interpolation[np.where((data_interpolation[:,1]<=max_nmax_fit)&(data_interpolation[:,2]<=60))]
     #raw_data_new = data_interpolation
-    print "raw_data_new="+str(raw_data_new)
     
     x_train = raw_data_new[:,1:3]
     y_train = raw_data_new[:,0]
@@ -419,11 +418,10 @@ target_option = 'gs'
 input_path = 'He4E_NNLOopt.txt'
 #output_path = './result/gs/'
 data_num = input_raw_data_count(input_path)
-print 'data_num='+str(data_num)
 # earlystopping parameters
 monitor  = 'loss'
 min_delta = 0.0001
-patience = 20
+patience = 30
 epochs = 10000
 input_dim = 2 
 output_dim = 1
@@ -435,7 +433,7 @@ gs_energy_line = 0
 run_times_start = 1 
 run_times_end   = 100
 #parameter for gaussian distribution of sample_weight
-FWHM = 100
+FWHM = 25
 sigma = FWHM/2.355 
 
 gs_converge_all = np.zeros(run_times_end)
@@ -465,7 +463,6 @@ for max_nmax_fit in range(20,21,2):
 
 
     
-print 'gs_converge_all='+str(gs_converge_all)
 
 
 #input()
