@@ -607,7 +607,7 @@ run_times_end   = 100
 #parameter for gaussian distribution of sample_weight
 sample_weight_switch = 'on'
 FWHM = 20
-sigma = FWHM/2.355 
+sigma = FWHM/2.35482004503 
 #correlate parameters
 corr_num   = 1
 corr_weight= 1.
