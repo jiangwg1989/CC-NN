@@ -322,9 +322,13 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
     raw_predic_data_60 = raw_predic_data[np.where(raw_predic_data[:,1]==100)]
     
     temp = (raw_predic_data[np.where(raw_predic_data[:,1]== 200)])
-    gs_converge = np.min(temp[:,0])
-   
- 
+    radius_converge = np.min(temp[:,0])
+    temp2= temp[np.where(:,2)==40]
+    radius_converge2=  temp2[0,1]
+    temp3= temp[np.where(:,2)==50]
+    radius_converge3=  temp3[0,1]
+
+
     
     x_list_2 = raw_predic_data_4[:,2]
     y_list_2 = raw_predic_data_4[:,0]
@@ -382,7 +386,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
     
 
     plt.legend(loc='upper right', bbox_to_anchor=(1.5,0.75),ncol=1,fancybox=True,shadow=True,borderaxespad = 0.)
-    plt.title("radius(infinite)="+str(gs_converge))
+    plt.title("radius(infinite)="+str(radius_converge))
     plot_path = 'radius.eps'
     plt.ylim((1.38,1.46))  
     plt.xlim((10,50))
@@ -416,7 +420,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
 #    
 #    raw_data_new_5 = raw_data[np.where(raw_data[:,1] == 200)]
 #    temp_1 = raw_data_new_5[:,0]
-#    gs_converge = np.min(temp_1)
+#    radius_converge = np.min(temp_1)
 #    
 #    raw_data_new = np.zeros((200,2),dtype = np.float)
 #    for loop in range(0,200):
@@ -424,26 +428,26 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
 #        raw_data_new[loop,0] = np.min(raw_data[np.where(raw_data[:,1]==loop+4)])
 #    
 #    x_list = raw_data_new[:,1]
-#    y_list = np.log10(raw_data_new[:,0] - gs_converge)
+#    y_list = np.log10(raw_data_new[:,0] - radius_converge)
 #    
 #    x_list_1 = raw_data_new_1 [:,1]
-#    y_list_1 = np.log10(raw_data_new_1[:,0] - gs_converge)
+#    y_list_1 = np.log10(raw_data_new_1[:,0] - radius_converge)
 #    
 #    x_list_2 = raw_data_new_2 [:,1]
-#    y_list_2 = np.log10(raw_data_new_2[:,0] - gs_converge)
+#    y_list_2 = np.log10(raw_data_new_2[:,0] - radius_converge)
 #    
 #    x_list_3 = raw_data_new_3 [:,1]
-#    y_list_3 = np.log10(raw_data_new_3[:,0] - gs_converge)
+#    y_list_3 = np.log10(raw_data_new_3[:,0] - radius_converge)
 #    
 #    x_list_4 = raw_data_new_4 [:,1]
-#    y_list_4 = np.log10(raw_data_new_4[:,0] - gs_converge)
+#    y_list_4 = np.log10(raw_data_new_4[:,0] - radius_converge)
 #    fig_1 = plt.figure('fig_1')
 #    l1 = plt.scatter(x_list_1,y_list_1,color='k',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=20')
 #    l2 = plt.scatter(x_list_2,y_list_2,color='r',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=30')
 #    l3 = plt.scatter(x_list_3,y_list_3,color='g',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=40')
 #    l4 = plt.scatter(x_list_4,y_list_4,color='b',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=50')
 #    
-#    plt.title("E(converge)="+str(gs_converge))
+#    plt.title("E(converge)="+str(radius_converge))
 #    
 #    plt.ylabel("lg(E(infinte)-E(converge))")
 #    plt.legend(loc = 'lower left')
@@ -456,7 +460,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
 #    l = plt.scatter(x_list,y_list,color='k',linestyle='--',s = 10, marker = 'x', label='E(infinite)')
 #    
 #    
-#    plt.title("E(converge)="+str(gs_converge))
+#    plt.title("E(converge)="+str(radius_converge))
 #    plt.ylabel("lg(E(infinte)-E(converge))")
 #    plt.legend(loc = 'lower left')
 #    #plt.ylim((1.2,2.8))
@@ -468,7 +472,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
 #   # import plot_gs as plot
 #    os.system('cp '+'different_hw.eps'+' '+output_path) 
 #    os.system('cp '+'lowest_each_Nmax.eps'+' '+output_path) 
-    return gs_converge,loss,val_loss
+    return radius_converge,radius_converge2,radius_converge3,loss,val_loss
 
 
 
@@ -500,7 +504,9 @@ FWHM_percent = 0.6
 
  
 
-gs_converge_all = np.zeros(run_times_end)
+radius_converge_all  = np.zeros(run_times_end)
+radius_converge_all2 = np.zeros(run_times_end)
+radius_converge_all3 = np.zeros(run_times_end)
 loss_all = np.zeros(run_times_end)
 val_loss_all = np.zeros(run_times_end)
 
@@ -512,17 +518,19 @@ for max_nmax_fit in range(20,21,2):
     os.system('mkdir '+nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit))
     with open(nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit)+'/'+'radius_NN_info.txt','a') as f_3:
         #f_3.read()
-        f_3.write('#############################################'+'\n')
-        f_3.write('# loop   radius          loss       val_loss'+'\n')
+        f_3.write('#################################################################################'+'\n')
+        f_3.write('# loop   radius    radius2(hw=40)   radius3(hw=50)      loss       val_loss'+'\n')
     for loop_all in range(run_times_start-1,run_times_end):
         os.system('mkdir '+nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit)+'/'+str(loop_all+1))
         output_path = nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit)+'/'+str(loop_all+1)
-        gs_converge_all[loop_all],loss_all[loop_all],val_loss_all[loop_all] = NN_all(input_path=input_path,output_path=output_path,data_num=data_num,monitor=monitor,min_delta=min_delta,patience=patience,epochs=epochs,input_dim=input_dim,output_dim=output_dim,interpol_count=interpol_count,max_nmax_fit=max_nmax_fit,FWHM_percent=FWHM_percent)
+        radius_converge_all[loop_all],radius_converge_all2[loop_all],radius_converge_all3[loop_all],loss_all[loop_all],val_loss_all[loop_all] = NN_all(input_path=input_path,output_path=output_path,data_num=data_num,monitor=monitor,min_delta=min_delta,patience=patience,epochs=epochs,input_dim=input_dim,output_dim=output_dim,interpol_count=interpol_count,max_nmax_fit=max_nmax_fit,FWHM_percent=FWHM_percent)
         with open(nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit)+'/'+'radius_NN_info.txt','a') as f_3:
             #f_3.read()
             f_3.write('{:>5}'.format(loop_all+1)+'   ')
-            f_3.write('{:>-10.5f}'.format(gs_converge_all[loop_all])+'   ')
+            f_3.write('{:>-10.5f}'.format(radius_converge_all[loop_all])+'   ')
             f_3.write('{:>-20.15f}'.format(loss_all[loop_all])+'   ')
+            f_3.write('{:>-20.15f}'.format(loss_all2[loop_all])+'   ')
+            f_3.write('{:>-20.15f}'.format(loss_all3[loop_all])+'   ')
             f_3.write('{:>-20.15f}'.format(val_loss_all[loop_all])+'\n')
 
 
