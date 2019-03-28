@@ -145,7 +145,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
     line_2_y = raw_data_new[:,0]
 
 #   radius_range is the FWHM 
-    radius_range = (np.max(line_1_y)-np.min(line_1_y)+np.max(line_1_y)-np.min(line_1_y))/2.
+    radius_range =np.abs((np.max(line_1_y)-np.min(line_1_y)+np.max(line_1_y)-np.min(line_1_y))/2.)
 
 #  balance x and y
     regulator = (np.max(line_1_x)-np.min(line_1_x)) / (np.max(line_1_y)-np.min(line_1_y))
@@ -496,7 +496,7 @@ run_times_start = 1
 run_times_end   = 100
 #parameter for gaussian distribution of sample_weight
 sample_weight_switch = 'on'
-FWHM_percent = 0.7
+FWHM_percent = 0.6
 
  
 

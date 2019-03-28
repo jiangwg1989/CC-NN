@@ -2,17 +2,14 @@ import numpy as np
 import matplotlib
 matplotlib.use('PS')
 import matplotlib.pyplot as plt
-
-
 import re
+from scipy.optimize import curve_fit
+from scipy import asarray as ar,exp
 from math import log
 from math import e
-from scipy.optimize import curve_fit 
-from scipy import asarray as ar,exp 
-
 import seaborn as sns 
 import matplotlib as mpl
-
+import os
 
 def input_file_2(file_path,raw_data):
     count = len(open(file_path,'rU').readlines())
@@ -29,21 +26,26 @@ def input_file_2(file_path,raw_data):
                 raw_data[loop2][2] = float(temp_1[3])
                 loop2 = loop2 + 1
             loop1 = loop1 + 1
+        print loop2
+
+pwd  = os.getcwd()
+print 'pwd='+pwd
+temp = re.findall(r"[-+]?\d+\.?\d*",pwd)
+max_nmax_fit = -1*int(temp[2])
 
 #######################################
 #######################################
 ## setting 
 #######################################
 #######################################
-x_min = -28 
-x_max = -27.4 
-y_min = 0 
-y_max = 0.05
+x_min = 1.2
+x_max = 1.8
+y_min = 0
+y_max = 0.0002
 
 
 
-
-file_path = "gs_NN_info.txt"
+file_path = "radius_NN_info.txt"
 data_num = len(open(file_path,'rU').readlines())
 raw_data = np.zeros((data_num,3),dtype = np.float)
 input_file_2(file_path,raw_data)
@@ -55,8 +57,8 @@ y_list = raw_data_new[:,1]
 fig_1 = plt.figure('fig_1')
 l = plt.scatter(x_list,y_list,color='b',s = 20, marker = 'o')
 
-plt.title("He4_Multi-NN_Nmax4~18")
-plt.xlabel("gs_energy (MeV)")
+plt.title("He4_Multi-NN_Nmax4~"+str(max_nmax_fit))
+plt.xlabel("radius_energy")
 plt.ylabel("loss")
 #plt.legend(loc = 'lower left')
 plt.ylim((y_min,y_max))
@@ -64,19 +66,20 @@ plt.xlim((x_min,x_max))
 #plt.savefig('Li6_radius_NN_prediction.jpg')
 plot_path = 'Multi-NN.eps'
 plt.savefig(plot_path)
-fig_1.show()
+#fig_1.show()
 
 
 
 raw_data_new_2 = raw_data_new[np.where((raw_data_new[:,0]>x_min)&(raw_data_new[:,0]<x_max))]
 x_list_1 = raw_data_new_2[:,0]
 
+print x_list_1
 
 fig_2 = plt.figure('fig_2')
 
 sns.set_palette("hls") 
 mpl.rc("figure", figsize=(6,4)) 
-sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ "color": "lightblue"}) 
+sns.distplot(x_list_1,bins=20,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ "color": "lightblue"}) 
 
 #plt.hist(x_list_1,200,normed=2,histtype='bar',facecolor='yellowgreen',alpha=0.75)
 #l = plt.scatter(x_list,y_list,color='k',linestyle='--',s = 10, marker = 'x', label='E(infinite)')
@@ -84,15 +87,15 @@ sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ 
 #
 #plt.title("E(converge)="+str(gs_converge))
 plt.ylabel("count")
-plt.xlabel("gs_energy (MeV)")
+plt.xlabel("radius (fm)")
 #plt.legend(loc = 'lower left')
 plt.xlim((x_min,x_max))
-plt.ylim((0,15))
+plt.ylim((0,50))
 ##plt.savefig('Li6_radius_NN_prediction.jpg')
-plot_path = 'multi-NN_distribution.pdf'
+plot_path = 'multi-NN_distribution.eps'
 plt.savefig(plot_path)
-#fig_2.show()
 plt.close('all')
+
 
 #################
 #################
@@ -102,7 +105,7 @@ plt.close('all')
 x = raw_data_new_2[:,0]
 y = raw_data_new_2[:,1]
 
-num_bins = 30 
+num_bins = 30  
 n, bins_left_x, patches = plt.hist(x, num_bins,normed=1, facecolor='blue', alpha=0.5)
 #print(bins_left_x)
 #print(n)
@@ -111,9 +114,8 @@ n, bins_left_x, patches = plt.hist(x, num_bins,normed=1, facecolor='blue', alpha
 def fun_gauss(x,a,x0,sigma):
     return a*exp(-(x-x0)**2./(2*sigma**2))
 
-# Note that bins_left_x have (num_bins + 1) len so we use the mid value of them
 x = (bins_left_x[1:len(bins_left_x)]+bins_left_x[0:len(bins_left_x)-1])/2
-y = n
+y = n 
 # set trail value
 n = len(x)
 mean = sum(x)/n
@@ -124,18 +126,9 @@ print('popt='+str(popt))
 print('mean='+str(popt[1]))
 print('FWHM='+str(np.abs(popt[2])*2.35482004503))
 
-x_new =  np.linspace(-28,-27.4,1000) 
+x_new =  np.linspace(x_min,x_max,1000)
 plt.plot(x_new,fun_gauss(x_new,popt[0],popt[1],popt[2]),label='fit')
 plt.title("mean = "+str(popt[1])+"  FWHM = "+str(np.abs(popt[2])*2.35482004503))
 plot_path= 'test.pdf'
 plt.savefig(plot_path)
 
-
-
-
-
-
-
-
-
-#input()
