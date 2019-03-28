@@ -482,8 +482,8 @@ for max_nmax_fit in range(20,21,2):
             #f_3.read()
             f_3.write('{:>5}'.format(loop_all+1)+'   ')
             f_3.write('{:>-10.5f}'.format(gs_converge_all[loop_all])+'   ')
-            f_3.write('{:>-10.5f}'.format(loss_all[loop_all])+'   ')
-            f_3.write('{:>-10.5f}'.format(val_loss_all[loop_all])+'\n')
+            f_3.write('{:>-20.15f}'.format(loss_all[loop_all])+'   ')
+            f_3.write('{:>-20.15f}'.format(val_loss_all[loop_all])+'\n')
 
 
     
