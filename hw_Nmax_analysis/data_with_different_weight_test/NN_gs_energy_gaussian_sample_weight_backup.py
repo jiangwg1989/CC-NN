@@ -456,7 +456,7 @@ run_times_start = 1
 run_times_end   = 100
 #parameter for gaussian distribution of sample_weight
 sample_weight_switch = 'on'
-FWHM = 25
+FWHM = 20
 sigma = FWHM/2.355
  
 
@@ -468,7 +468,7 @@ os.system('mkdir '+nuclei)
 os.system('mkdir '+nuclei+'/'+target_option)        
 
 
-for max_nmax_fit in range(20,21,2):
+for max_nmax_fit in range(20,17,-2):
     os.system('mkdir '+nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit))
     with open(nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit)+'/'+'gs_NN_info.txt','a') as f_3:
         #f_3.read()
