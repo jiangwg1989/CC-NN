@@ -323,10 +323,11 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
     
     temp = (raw_predic_data[np.where(raw_predic_data[:,1]== 200)])
     radius_converge = np.min(temp[:,0])
-    temp2= temp[np.where(:,2)==40]
-    radius_converge2=  temp2[0,1]
-    temp3= temp[np.where(:,2)==50]
-    radius_converge3=  temp3[0,1]
+    temp2 = (raw_predic_data[np.where((raw_predic_data[:,1]== 200)&(raw_predic_data[:,2]==50))])
+    print("temp2="+str(temp2))
+    radius_converge2=  temp2[0,0]
+    temp3 = (raw_predic_data[np.where((raw_predic_data[:,1]== 200)&(raw_predic_data[:,2]==70))])
+    radius_converge3=  temp3[0,0]
 
 
     
@@ -500,7 +501,7 @@ run_times_start = 1
 run_times_end   = 100
 #parameter for gaussian distribution of sample_weight
 sample_weight_switch = 'on'
-FWHM_percent = 0.6
+FWHM_percent = 0.4
 
  
 
@@ -519,7 +520,7 @@ for max_nmax_fit in range(20,21,2):
     with open(nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit)+'/'+'radius_NN_info.txt','a') as f_3:
         #f_3.read()
         f_3.write('#################################################################################'+'\n')
-        f_3.write('# loop   radius    radius2(hw=40)   radius3(hw=50)      loss       val_loss'+'\n')
+        f_3.write('# loop   radius    radius2(hw=50)   radius3(hw=70)      loss       val_loss'+'\n')
     for loop_all in range(run_times_start-1,run_times_end):
         os.system('mkdir '+nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit)+'/'+str(loop_all+1))
         output_path = nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit)+'/'+str(loop_all+1)
@@ -528,9 +529,9 @@ for max_nmax_fit in range(20,21,2):
             #f_3.read()
             f_3.write('{:>5}'.format(loop_all+1)+'   ')
             f_3.write('{:>-10.5f}'.format(radius_converge_all[loop_all])+'   ')
+            f_3.write('{:>-10.5f}'.format(radius_converge_all2[loop_all])+'   ')
+            f_3.write('{:>-10.5f}'.format(radius_converge_all3[loop_all])+'   ')
             f_3.write('{:>-20.15f}'.format(loss_all[loop_all])+'   ')
-            f_3.write('{:>-20.15f}'.format(loss_all2[loop_all])+'   ')
-            f_3.write('{:>-20.15f}'.format(loss_all3[loop_all])+'   ')
             f_3.write('{:>-20.15f}'.format(val_loss_all[loop_all])+'\n')
 
 
