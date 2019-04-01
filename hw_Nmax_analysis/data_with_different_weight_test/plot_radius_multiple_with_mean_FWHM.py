@@ -26,10 +26,8 @@ def input_file_2(file_path,raw_data):
                 raw_data[loop2][2] = float(temp_1[3])
                 loop2 = loop2 + 1
             loop1 = loop1 + 1
-        print loop2
 
 pwd  = os.getcwd()
-print 'pwd='+pwd
 temp = re.findall(r"[-+]?\d+\.?\d*",pwd)
 max_nmax_fit = -1*int(temp[2])
 
@@ -73,7 +71,6 @@ plt.savefig(plot_path)
 raw_data_new_2 = raw_data_new[np.where((raw_data_new[:,0]>x_min)&(raw_data_new[:,0]<x_max))]
 x_list_1 = raw_data_new_2[:,0]
 
-print x_list_1
 
 fig_2 = plt.figure('fig_2')
 
