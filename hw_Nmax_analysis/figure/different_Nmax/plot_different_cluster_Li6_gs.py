@@ -71,8 +71,12 @@ def input_raw_data_count(file_path):
 ##########################################################
 
 raw_data = np.zeros((6,3))
+raw_data2 = np.zeros((6,3))
 file_path_1= "Li6_gs_different_Nmax.txt"
 input_file_2(file_path_1,raw_data)
+file_path_2= "Li6_gs_different_Nmax_IR.txt"
+input_file_2(file_path_2,raw_data2)
+
 
 fig_1 = plt.figure('fig_1',figsize=(4,4))
 #plt.subplots_adjust(wspace =0.3, hspace =0.2)
@@ -85,8 +89,13 @@ plt.tick_params(top=True,bottom=True,left=True,right=False)
 
 x     = raw_data[:,0]  
 mean  = raw_data[:,1]
-error = raw_data[:,2]/2
-plt.errorbar(x,mean,error,fmt='.k' )
+error = raw_data[:,2]/2.355
+plt.errorbar(x,mean,error,fmt='.k',ecolor='g' )
+x     = raw_data2[:,0]  
+mean  = raw_data2[:,1]
+error = raw_data2[:,2]
+plt.errorbar(x,mean,error,fmt='.k',ecolor='b' )
+
 
 ##########################################################
 ### setting parameters
@@ -95,12 +104,12 @@ y_fontsize = 8
 x_lim_min  = 11
 x_lim_max  = 23
 y_lim_min  = -31.0
-y_lim_max  = -29.8
+y_lim_max  = -29.6
 x_tick_min = 11
 x_tick_max = 23
 x_tick_gap = 2
 y_tick_min = y_lim_min
-y_tick_max = -29.799
+y_tick_max = -29.599
 y_tick_gap = 0.2
 y_label_f  = 12
 
