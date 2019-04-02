@@ -268,7 +268,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
     
     early_stopping = EarlyStopping(monitor=monitor,min_delta = min_delta , patience=patience, verbose=0, mode='min')
     
-    history = model.fit(x_train,y_train, epochs = epochs, validation_split = 0.01 , shuffle = 1,batch_size =32 , callbacks=[early_stopping], sample_weight = raw_data_new[:,3],verbose=0)
+    history = model.fit(x_train,y_train, epochs = epochs, validation_split = 0.01 , shuffle = 1,batch_size =32 , callbacks=[early_stopping], sample_weight = raw_data_new[:,3],verbose=2)
     loss = history.history['loss'][len(history.history['loss'])-1]
     val_loss = history.history['val_loss'][len(history.history['val_loss'])-1]
     
@@ -480,9 +480,9 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
 #
 # all NN parameters
 #
-nuclei = 'He4'
+nuclei = 'Li6'
 target_option = 'radius'
-input_path = 'He4R_NNLOopt.txt'
+input_path = 'Li6R_NNLOopt.txt'
 #output_path = './result/gs/'
 data_num = input_raw_data_count(input_path)
 # earlystopping parameters
@@ -501,7 +501,7 @@ run_times_start = 1
 run_times_end   = 100
 #parameter for gaussian distribution of sample_weight
 sample_weight_switch = 'on'
-FWHM_percent = 0.4
+FWHM_percent = 0.5
 
  
 
@@ -515,7 +515,7 @@ os.system('mkdir '+nuclei)
 os.system('mkdir '+nuclei+'/'+target_option)        
 
 
-for max_nmax_fit in range(20,21,2):
+for max_nmax_fit in range(14,15,2):
     os.system('mkdir '+nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit))
     with open(nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit)+'/'+'radius_NN_info.txt','a') as f_3:
         #f_3.read()

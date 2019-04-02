@@ -132,9 +132,9 @@ plt.ylim((y_lim_min,y_lim_max))
 
 raw_data = np.zeros((6,3))
 raw_data2 = np.zeros((6,3))
-file_path_1= "He4_gs_different_Nmax.txt"
+file_path_1= "He4_radius_different_Nmax.txt"
 input_file_2(file_path_1,raw_data)
-file_path_2= "He4_gs_different_Nmax_IR.txt"
+file_path_2= "He4_radius_different_Nmax_IR.txt"
 input_file_2(file_path_2,raw_data2)
 
 
@@ -147,7 +147,7 @@ plt.tick_params(top=True,bottom=True,left=True,right=False)
 
 x     = raw_data[:,0]  
 mean  = raw_data[:,1]
-error = raw_data[:,2]
+error = raw_data[:,2]/2.355
 plt.errorbar(x,mean,error,fmt='.k',ecolor='b' )
 x     = raw_data2[:,0]  
 mean  = raw_data2[:,1]
@@ -158,12 +158,21 @@ plt.errorbar(x,mean,error,fmt='.k',ecolor='g' )
 ##########################################################
 ### setting parameters
 ##########################################################
-y_lim_min  = -27.70
-y_lim_max  = -27.50
-x_tick_gap = 2 
+y_fontsize = 8
+x_lim_min  = 9
+x_lim_max  = 21
+y_lim_min  = 1.424
+y_lim_max  = 1.444
+x_tick_min = x_lim_max
+x_tick_max = y_lim_max
+x_tick_gap = 2
 y_tick_min = y_lim_min
-y_tick_max = -27.499
-y_tick_gap = 0.04
+y_tick_max = y_lim_max+0.00001
+y_tick_gap = 0.004
+y_label_f  = 12
+
+
+
 
 #plt.xlabel()
 plt.ylabel(r'$r \ \rm{(fm)}$',fontsize=y_label_f)
