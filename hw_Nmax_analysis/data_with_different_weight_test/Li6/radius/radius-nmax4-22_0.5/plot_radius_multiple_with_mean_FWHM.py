@@ -36,8 +36,8 @@ max_nmax_fit = -1*int(temp[2])
 ## setting 
 #######################################
 #######################################
-x_min = 2.35
-x_max = 2.7
+x_min = 1.8
+x_max = 3.0
 y_min = 0
 y_max = 0.0001
 
@@ -102,7 +102,7 @@ plt.close('all')
 x = raw_data_new_2[:,0]
 y = raw_data_new_2[:,1]
 
-num_bins = 35  
+num_bins = 50 
 n, bins_left_x, patches = plt.hist(x, num_bins,normed=1, facecolor='blue', alpha=0.5)
 #print(bins_left_x)
 #print(n)
