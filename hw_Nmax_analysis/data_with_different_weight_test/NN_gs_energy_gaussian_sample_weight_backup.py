@@ -435,9 +435,9 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
 #
 # all NN parameters
 #
-nuclei = 'He4'
+nuclei = 'O16'
 target_option = 'gs'
-input_path = 'He4E_NNLOopt.txt'
+input_path = 'O16E_NNLOopt_CC.txt'
 #output_path = './result/gs/'
 data_num = input_raw_data_count(input_path)
 # earlystopping parameters
@@ -453,7 +453,7 @@ hw_line = 2
 nmax_line = 1
 gs_energy_line = 0
 run_times_start = 1 
-run_times_end   = 100
+run_times_end   = 150
 #parameter for gaussian distribution of sample_weight
 sample_weight_switch = 'on'
 FWHM = 20
@@ -468,7 +468,7 @@ os.system('mkdir '+nuclei)
 os.system('mkdir '+nuclei+'/'+target_option)        
 
 
-for max_nmax_fit in range(20,17,-2):
+for max_nmax_fit in range(6,5,-2):
     os.system('mkdir '+nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit))
     with open(nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit)+'/'+'gs_NN_info.txt','a') as f_3:
         #f_3.read()

@@ -12,7 +12,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import keras.losses
-
+import matplotlib.gridspec as gridspec
 
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 from keras.models import Sequential
@@ -69,12 +69,16 @@ def input_raw_data_count(file_path):
 # plot gs
 ##########################################################
 ##########################################################
+capsize= 2
 
 raw_data = np.zeros((3,3))
 file_path_1= "O16_gs_different_Nmax.txt"
 input_file_2(file_path_1,raw_data)
+fig_1 = plt.figure('fig_1',figsize=[3,3])
+plt.subplots_adjust(wspace =0, hspace =0.5)
 
-fig_1 = plt.figure('fig_1',figsize=(4,4))
+gs    = gridspec.GridSpec(3,3)
+ax1   = fig_1.add_subplot(gs[0:2,:])
 #plt.subplots_adjust(wspace =0.3, hspace =0.2)
 
 matplotlib.rcParams['xtick.direction'] = 'in' 
@@ -95,8 +99,8 @@ x_fontsize = 8
 y_fontsize = 8
 x_lim_min  = 7
 x_lim_max  = 13
-y_lim_min  = -131
-y_lim_max  = -126
+y_lim_min  = -132
+y_lim_max  = -129
 x_tick_min = x_lim_min
 x_tick_max = y_lim_max
 x_tick_gap = 2
@@ -113,7 +117,64 @@ plt.xlim((x_lim_min,x_lim_max))
 plt.ylim((y_lim_min,y_lim_max))
 
 
-plot_path = 'different_Nmax_observables_He4.pdf'
+
+
+
+##########################################################
+##########################################################
+# plot gs
+##########################################################
+##########################################################
+
+raw_data = np.zeros((3,3))
+file_path_1= "O16_gs_different_Nmax.txt"
+input_file_2(file_path_1,raw_data)
+
+ax2 = fig_1.add_subplot(gs[2,:])
+#plt.subplots_adjust(wspace =0.3, hspace =0.2)
+
+
+#ax1 = fig_1.add_subplot(2,1,1)
+plt.tick_params(top=True,bottom=True,left=True,right=False)
+
+x     = raw_data[:,0]  
+mean  = raw_data[:,1]
+error = raw_data[:,2]/2.355
+
+plt.plot(x,mean, color='g', linestyle = '',linewidth=0.5,marker='s', markerfacecolor='none',mew=1,markersize=5,zorder=5,label='NN extrapolation')
+plt.errorbar(x,mean,error,linestyle="None",ecolor='g',capsize=capsize)
+
+
+
+
+##########################################################
+### setting parameters
+##########################################################
+x_fontsize = 8
+y_fontsize = 8
+x_lim_min  = 7
+x_lim_max  = 13
+y_lim_min  = -132
+y_lim_max  = -129
+x_tick_min = x_lim_min
+x_tick_max = y_lim_max
+x_tick_gap = 2
+y_tick_min = y_lim_min
+y_tick_max = -120
+y_tick_gap = 1
+y_label_f  = 10
+
+plt.xlabel('$N_{max}$',fontsize=y_label_f)
+#plt.ylabel(r'$E_{gs} \ \rm{(MeV)}$',fontsize=y_label_f)
+plt.xticks(np.arange(8,13,2),fontsize = x_fontsize)
+plt.yticks(np.arange(y_tick_min,y_tick_max,y_tick_gap),fontsize = y_fontsize)
+plt.xlim((x_lim_min,x_lim_max))
+plt.ylim((y_lim_min,y_lim_max))
+
+
+
+
+plot_path = 'different_Nmax_observables_O16.pdf'
 plt.savefig(plot_path,bbox_inches='tight')
 
 

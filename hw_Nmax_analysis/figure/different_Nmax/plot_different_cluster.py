@@ -12,6 +12,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import keras.losses
+import scipy as sp
 
 
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
@@ -28,6 +29,9 @@ from keras import layers
 from keras import backend as K
 from keras.engine.topology import Layer
 from keras.layers.core import Lambda
+
+from scipy.interpolate import interp1d
+
 
 matplotlib.rcParams['xtick.direction'] = 'in'
 matplotlib.rcParams['ytick.direction'] = 'in'
@@ -69,7 +73,7 @@ def input_raw_data_count(file_path):
 # plot gs
 ##########################################################
 ##########################################################
-
+capsize = 2
 raw_data = np.zeros((6,3))
 raw_data2= np.zeros((6,3))
 file_path_1= "He4_gs_different_Nmax.txt"
@@ -84,18 +88,31 @@ matplotlib.rcParams['xtick.direction'] = 'in'
 matplotlib.rcParams['ytick.direction'] = 'in' 
 
 ax1 = fig_1.add_subplot(2,1,1)
-plt.tick_params(top=True,bottom=True,left=True,right=False)
+plt.tick_params(top='on',bottom='on',left='on',right='off')
 
 x     = raw_data[:,0]  
 mean  = raw_data[:,1]
-error = raw_data[:,2]
-plt.errorbar(x,mean,error,fmt='.k',ecolor='b' )
+error = raw_data[:,2]/2.355
+plt.plot(x,mean, color='g', linestyle = '',linewidth=0.5,marker='s', markerfacecolor='none',mew=1,markersize=5,zorder=5,label='NN extrapolation')
+plt.errorbar(x,mean,error,linestyle="None",ecolor='g',capsize=capsize,zorder=5)#,fmt='.k',ecolor='b' )
+
+#f2 = interp1d(x,mean,kind='cubic',fill_value="extrapolate")
+#xnew = np.linspace(9.5,20.5,num=41,endpoint = True)
+#plt.plot(xnew,f2(xnew),linestyle='--',color='crimson',linewidth=1)
+
 
 x     = raw_data2[:,0]  
 mean  = raw_data2[:,1]
 error = raw_data2[:,2]
-plt.errorbar(x,mean,error,fmt='.k' ,ecolor='g')
+plt.plot(x,mean, color='crimson', linestyle = '',linewidth=0.5,marker='s', markerfacecolor='none',mew=1,markersize=5,zorder=1,label='IR extrapolation')
+plt.errorbar(x,mean,error,linestyle="None",ecolor='crimson',capsize=capsize,zorder=1)
 
+#f2 = interp1d(x,mean,kind='quadratic',fill_value="extrapolate")
+#xnew = np.linspace(9.5,20.5,num=41,endpoint = True)
+#plt.plot(xnew,f2(xnew),linestyle='--',color='g',linewidth=1)
+
+#xnew = np.linspace(9.5,20.5,num=41,endpoint = True)
+#plt.plot(xnew,f2(xnew),linestyle='--',color='g',linewidth=1)
 
 ##########################################################
 ### setting parameters
@@ -113,14 +130,19 @@ y_tick_max = -27.499
 y_tick_gap = 0.05
 y_label_f  = 12
 
+
+
+
+
 #plt.xlabel()
 plt.ylabel(r'$E_{gs} \ \rm{(MeV)}$',fontsize=y_label_f)
-plt.xticks([])
+#plt.xticks([])
 plt.yticks(np.arange(y_tick_min,y_tick_max,y_tick_gap),fontsize = y_fontsize)
+plt.xticks(fontsize=False,color='white')
 plt.xlim((x_lim_min,x_lim_max))
 plt.ylim((y_lim_min,y_lim_max))
 
-
+plt.legend(loc=4,frameon=False,fontsize=9,labelspacing=0.3,handletextpad=0.1)
 
 
 ##########################################################
@@ -143,16 +165,27 @@ matplotlib.rcParams['xtick.direction'] = 'in'
 matplotlib.rcParams['ytick.direction'] = 'in' 
 
 ax2 = fig_1.add_subplot(2,1,2)
-plt.tick_params(top=True,bottom=True,left=True,right=False)
+plt.tick_params(top='on',bottom='on',left='on',right='off')
 
 x     = raw_data[:,0]  
 mean  = raw_data[:,1]
 error = raw_data[:,2]/2.355
-plt.errorbar(x,mean,error,fmt='.k',ecolor='b' )
+plt.plot(x,mean, color='g', linestyle = '',linewidth=0.5,marker='s', markerfacecolor='none',mew=1,markersize=5,zorder=5,label='NN extrapolation')
+plt.errorbar(x,mean,error,linestyle="None",ecolor='g',capsize=capsize,zorder=5)
+
+#f2 = interp1d(x,mean,kind='cubic',fill_value="extrapolate")
+#xnew = np.linspace(9.5,20.5,num=41,endpoint = True)
+#plt.plot(xnew,f2(xnew),linestyle='--',color='crimson',linewidth=1)
+
 x     = raw_data2[:,0]  
 mean  = raw_data2[:,1]
 error = raw_data2[:,2]
-plt.errorbar(x,mean,error,fmt='.k',ecolor='g' )
+plt.plot(x,mean, color='crimson', linestyle = '',linewidth=0.5,marker='s', markerfacecolor='none',mew=1,markersize=5,zorder=1,label='IR extrapolation')
+plt.errorbar(x,mean,error,linestyle="None",ecolor='crimson',capsize=capsize ,zorder=1)
+
+#f2 = interp1d(x,mean,kind='cubic',fill_value="extrapolate")
+#xnew = np.linspace(9.5,20.5,num=41,endpoint = True)
+#plt.plot(xnew,f2(xnew),linestyle='--',color='g',linewidth=1)
 
 
 ##########################################################
@@ -172,14 +205,16 @@ y_tick_gap = 0.004
 y_label_f  = 12
 
 
+plt.legend(loc=4,frameon=False,fontsize=9,labelspacing=0.3,handletextpad=0.1)
 
 
-#plt.xlabel()
+plt.xlabel(r'$N_{max}$',fontsize=y_label_f)
 plt.ylabel(r'$r \ \rm{(fm)}$',fontsize=y_label_f)
 #plt.xticks([])
 plt.yticks(np.arange(y_tick_min,y_tick_max,y_tick_gap),fontsize = y_fontsize)
 plt.xlim((x_lim_min,x_lim_max))
 plt.ylim((y_lim_min,y_lim_max))
+fig_1.tight_layout()
 plot_path = 'different_Nmax_observables_He4.pdf'
 plt.savefig(plot_path,bbox_inches='tight')
 

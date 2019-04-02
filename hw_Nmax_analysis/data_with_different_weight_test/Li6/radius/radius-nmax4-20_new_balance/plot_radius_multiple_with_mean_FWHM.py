@@ -102,7 +102,7 @@ plt.close('all')
 x = raw_data_new_2[:,0]
 y = raw_data_new_2[:,1]
 
-num_bins = 50 
+num_bins = 20 
 n, bins_left_x, patches = plt.hist(x, num_bins,normed=1, facecolor='blue', alpha=0.5)
 #print(bins_left_x)
 #print(n)

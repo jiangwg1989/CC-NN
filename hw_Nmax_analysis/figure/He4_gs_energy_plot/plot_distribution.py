@@ -92,7 +92,7 @@ plt.tick_params(top=True,bottom=True,left=True,right=False)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
-l1=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ "color": "lightskyblue"},label='N_') 
+l1=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ "color": "lightgreen"},label='N_') 
 
 #plt.hist(x_list_1,200,normed=2,histtype='bar',facecolor='yellowgreen',alpha=0.75)
 #l = plt.scatter(x_list,y_list,color='k',linestyle='--',s = 10, marker = 'x', label='E(infinite)')
@@ -102,7 +102,7 @@ plt.title("origin datasets")
 plt.ylabel("count")
 #plt.xlabel("gs_energy (MeV)")
 #plt.legend(loc = 'upper left',frameon=False)
-plt.text(-28, 10, '$N_{max}4\sim10$', fontsize=10)
+plt.text(-28, 10, '$N_{max}4$-$10$', fontsize=10)
 plt.xticks(np.arange(x_tick_min,x_tick_max,x_tick_gap),fontsize = 0)
 plt.yticks(np.arange(y_tick_min,y_tick_max+0.01,y_tick_gap),fontsize = y_fontsize)
 plt.xlim((x_lim_min,x_lim_max))
@@ -130,7 +130,7 @@ plt.tick_params(top=True,bottom=True,left=True,right=False)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
-l2=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ "color": "lightskyblue"}) 
+l2=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ "color": "lightgreen"}) 
 
 plt.ylabel("count")
 #plt.xlabel("gs_energy (MeV)")
@@ -139,7 +139,7 @@ plt.xticks(np.arange(x_tick_min,x_tick_max,x_tick_gap),fontsize = 0)
 plt.yticks(np.arange(y_tick_min,y_tick_max+0.01,y_tick_gap),fontsize = y_fontsize)
 
 
-plt.text(-28, 10, '$N_{max}4\sim12$', fontsize=10)
+plt.text(-28, 10, '$N_{max}4$-$12$', fontsize=10)
 plt.xlim((x_lim_min,x_lim_max))
 plt.ylim((y_lim_min,y_lim_max))
 plt.yticks(np.arange(0,15,5))
@@ -165,7 +165,7 @@ plt.tick_params(top=True,bottom=True,left=True,right=False)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
-l2=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ "color": "lightskyblue"}) 
+l2=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ "color": "lightgreen"}) 
 
 plt.ylabel("count")
 #plt.xlabel("gs_energy (MeV)")
@@ -174,7 +174,7 @@ plt.xticks(np.arange(x_tick_min,x_tick_max,x_tick_gap),fontsize = 0)
 plt.yticks(np.arange(y_tick_min,y_tick_max+0.01,y_tick_gap),fontsize = y_fontsize)
 
 
-plt.text(-28, 10, '$N_{max}4\sim14$', fontsize=10)
+plt.text(-28, 10, '$N_{max}4$-$14$', fontsize=10)
 plt.xlim((x_lim_min,x_lim_max))
 plt.ylim((y_lim_min,y_lim_max))
 plt.yticks(np.arange(0,15,5))
@@ -201,7 +201,7 @@ plt.tick_params(top=True,bottom=True,left=True,right=False)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
-l2=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ "color": "lightskyblue"}) 
+l2=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ "color": "lightgreen"}) 
 
 plt.ylabel("count")
 #plt.xlabel("gs_energy (MeV)")
@@ -210,7 +210,7 @@ plt.xticks(np.arange(x_tick_min,x_tick_max,x_tick_gap),fontsize = 0)
 plt.yticks(np.arange(y_tick_min,y_tick_max+0.01,y_tick_gap),fontsize = y_fontsize)
 
 
-plt.text(-28, 10, '$N_{max}4\sim16$', fontsize=10)
+plt.text(-28, 10, '$N_{max}4$-$16$', fontsize=10)
 plt.xlim((x_lim_min,x_lim_max))
 plt.ylim((y_lim_min,y_lim_max))
 plt.yticks(np.arange(0,15,5))
@@ -236,7 +236,7 @@ plt.tick_params(top=True,bottom=True,left=True,right=False)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
-l2=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ "color": "lightskyblue"}) 
+l2=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ "color": "lightgreen"}) 
 
 plt.ylabel("count")
 #plt.xlabel("gs_energy (MeV)")
@@ -245,7 +245,7 @@ plt.ylabel("count")
 plt.xticks(np.arange(x_tick_min,x_tick_max,x_tick_gap),fontsize = 0)
 plt.yticks(np.arange(y_tick_min,y_tick_max+0.01,y_tick_gap),fontsize = y_fontsize)
 
-plt.text(-28, 10, '$N_{max}4\sim18$', fontsize=10)
+plt.text(-28, 10, '$N_{max}4$-$18$', fontsize=10)
 plt.xlim((x_lim_min,x_lim_max))
 plt.ylim((y_lim_min,y_lim_max))
 plt.yticks(np.arange(0,15,5))
@@ -271,7 +271,7 @@ plt.tick_params(top=True,bottom=True,left=True,right=False)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
-l2=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ "color": "lightskyblue"}) 
+l2=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ "color": "lightgreen"}) 
 
 plt.ylabel("count")
 plt.xlabel(r"$E_{gs} \ \rm{(MeV)}$")
@@ -280,7 +280,7 @@ plt.xlabel(r"$E_{gs} \ \rm{(MeV)}$")
 plt.xticks(np.arange(x_tick_min,x_tick_max,x_tick_gap),fontsize = y_fontsize)
 plt.yticks(np.arange(y_tick_min,y_tick_max+0.01,y_tick_gap),fontsize = y_fontsize)
 
-plt.text(-28, 10, '$N_{max}4\sim20$', fontsize=10)
+plt.text(-28, 10, '$N_{max}4$-$20$', fontsize=10)
 plt.xlim((x_lim_min,x_lim_max))
 plt.ylim((y_lim_min,y_lim_max))
 plt.yticks(np.arange(0,15,5))
@@ -349,7 +349,7 @@ plt.tick_params(top=True,bottom=True,left=True,right=False)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
-l1=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ "color": "lightskyblue"}) 
+l1=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ "color": "lightgreen"}) 
 
 #plt.hist(x_list_1,200,normed=2,histtype='bar',facecolor='yellowgreen',alpha=0.75)
 #l = plt.scatter(x_list,y_list,color='k',linestyle='--',s = 10, marker = 'x', label='E(infinite)')
@@ -364,7 +364,7 @@ plt.yticks(np.arange(y_tick_min,y_tick_max+0.01,y_tick_gap),fontsize = y_fontsiz
 plt.xlim((x_lim_min,x_lim_max))
 plt.ylim((y_lim_min,y_lim_max))
 
-plt.text(text_x,text_y, '$N_{max}4\sim10$', fontsize=text_f)
+plt.text(text_x,text_y, '$N_{max}4$-$10$', fontsize=text_f)
 
 
 #########################################################
@@ -387,7 +387,7 @@ plt.tick_params(top=True,bottom=True,left=True,right=False)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
-l2=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ "color": "lightskyblue"}) 
+l2=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":3 }, hist_kws={ "color": "lightgreen"}) 
 
 plt.ylabel("count")
 #plt.xlabel("gs_energy (MeV)")
@@ -421,7 +421,7 @@ plt.tick_params(top=True,bottom=True,left=True,right=False)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
-l2=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":2.75 }, hist_kws={ "color": "lightskyblue"}) 
+l2=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":2.75 }, hist_kws={ "color": "lightgreen"}) 
 
 plt.ylabel("count")
 #plt.xlabel("gs_energy (MeV)")
@@ -456,7 +456,7 @@ plt.tick_params(top=True,bottom=True,left=True,right=False)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
-l2=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":2.5 }, hist_kws={ "color": "lightskyblue"}) 
+l2=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":2.5 }, hist_kws={ "color": "lightgreen"}) 
 
 plt.ylabel("count")
 #plt.xlabel("gs_energy (MeV)")
@@ -490,7 +490,7 @@ plt.tick_params(top=True,bottom=True,left=True,right=False)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
-l2=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":2.25 }, hist_kws={ "color": "lightskyblue"}) 
+l2=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":2.25 }, hist_kws={ "color": "lightgreen"}) 
 
 plt.ylabel("count")
 #plt.xlabel("gs_energy (MeV)")
@@ -524,7 +524,7 @@ plt.tick_params(top=True,bottom=True,left=True,right=False)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
-l2=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":2 }, hist_kws={ "color": "lightskyblue"}) 
+l2=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":2 }, hist_kws={ "color": "lightgreen"}) 
 
 plt.ylabel("count")
 plt.xlabel(r"$E_{gs} \ \rm{(MeV)}$")
@@ -545,7 +545,7 @@ plt.text(text_x,text_y, '$N_{max}4\sim20$', fontsize=text_f)
 
 
 
-plot_path = 'multi-NN_distribution.pdf'
+plot_path = 'multi-NN_distribution_corr_vs_balance.pdf'
 plt.savefig(plot_path)
 #fig_2.show()
 
