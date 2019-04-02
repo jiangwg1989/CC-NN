@@ -103,14 +103,14 @@ plt.errorbar(x,mean,error,fmt='.k' ,ecolor='g')
 y_fontsize = 8
 x_lim_min  = 9
 x_lim_max  = 21
-y_lim_min  = -27.70
+y_lim_min  = -27.75
 y_lim_max  = -27.50
 x_tick_min = x_lim_max
 x_tick_max = y_lim_max
 x_tick_gap = 2
 y_tick_min = y_lim_min
 y_tick_max = -27.499
-y_tick_gap = 0.04
+y_tick_gap = 0.05
 y_label_f  = 12
 
 #plt.xlabel()
