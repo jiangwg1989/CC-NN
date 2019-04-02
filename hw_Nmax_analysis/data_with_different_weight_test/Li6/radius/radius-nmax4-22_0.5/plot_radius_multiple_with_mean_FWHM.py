@@ -36,10 +36,10 @@ max_nmax_fit = -1*int(temp[2])
 ## setting 
 #######################################
 #######################################
-x_min = 2.2
+x_min = 2.35
 x_max = 2.7
 y_min = 0
-y_max = 0.0002
+y_max = 0.0001
 
 
 
@@ -62,7 +62,7 @@ plt.ylabel("loss")
 plt.ylim((y_min,y_max))
 plt.xlim((x_min,x_max))
 #plt.savefig('Li6_radius_NN_prediction.jpg')
-plot_path = 'Multi-NN.eps'
+plot_path = 'Multi-NN.pdf'
 plt.savefig(plot_path)
 #fig_1.show()
 
@@ -89,7 +89,7 @@ plt.xlabel("radius (fm)")
 plt.xlim((x_min,x_max))
 plt.ylim((0,50))
 ##plt.savefig('Li6_radius_NN_prediction.jpg')
-plot_path = 'multi-NN_distribution.eps'
+plot_path = 'multi-NN_distribution.pdf'
 plt.savefig(plot_path)
 plt.close('all')
 
@@ -102,7 +102,7 @@ plt.close('all')
 x = raw_data_new_2[:,0]
 y = raw_data_new_2[:,1]
 
-num_bins = 30  
+num_bins = 35  
 n, bins_left_x, patches = plt.hist(x, num_bins,normed=1, facecolor='blue', alpha=0.5)
 #print(bins_left_x)
 #print(n)
