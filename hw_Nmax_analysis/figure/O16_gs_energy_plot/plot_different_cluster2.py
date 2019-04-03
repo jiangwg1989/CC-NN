@@ -494,6 +494,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     plt.text(41.7,-117,'$N_{max}$=$8$',size=8)
     plt.text(43.5,-122,'$N_{max}$=$10$',size=8)
     plt.text(42.5,-129.8,'$N_{max}$=$100$',size=8)
+    plt.text(11,-131.25,'-131.18',color='g',size=8)
    
     plt.legend( bbox_to_anchor=(0.08,1), loc='upper left',fancybox=True,shadow=True, prop = {'size':10})
 #    plt.title("gs(infinite)="+str(gs_converge))
@@ -573,7 +574,7 @@ corr_weight= 1.
 ##########################################################
 capsize= 2
 
-raw_data = np.zeros((3,3))
+raw_data = np.zeros((4,3))
 file_path_1= "O16_gs_different_Nmax.txt"
 input_file_2(file_path_1,raw_data)
 fig_1 = plt.figure('fig_1',figsize=[4,5])
@@ -606,7 +607,7 @@ NN_all(input_path=input_path,output_path=output_path,data_num=data_num,monitor=m
 ##########################################################
 ##########################################################
 
-raw_data = np.zeros((3,3))
+raw_data = np.zeros((4,3))
 file_path_1= "O16_gs_different_Nmax.txt"
 input_file_2(file_path_1,raw_data)
 
@@ -625,28 +626,31 @@ plt.plot(x,mean, color='g', linestyle = '',linewidth=0.5,marker='s', markerfacec
 plt.errorbar(x,mean,error,linestyle="None",ecolor='g',capsize=capsize)
 
 
-
 ##########################################################
 ### setting parameters
 ##########################################################
 x_fontsize = 10
 y_fontsize = 10
-x_lim_min  = 7
+x_lim_min  = 5
 x_lim_max  = 13
-y_lim_min  = -132
-y_lim_max  = -129
+y_lim_min  = -133
+y_lim_max  = -125
 x_tick_min = x_lim_min
 x_tick_max = y_lim_max
 x_tick_gap = 2
 y_tick_min = y_lim_min
 y_tick_max = -120
-y_tick_gap = 1
+y_tick_gap = 2
 y_label_f  = 12
+
+
+plt.hlines(-130.176, x_lim_min, x_lim_max,colors='g', linestyle='--')
+plt.text(5.2,-131.3,'-131.18',color='g',size=8)
 
 plt.xlabel('$N_{max}$',fontsize=y_label_f)
 #plt.ylabel(r'$E_{gs} \ \rm{(MeV)}$',fontsize=y_label_f)
-plt.xticks(np.arange(8,13,2),fontsize = x_fontsize)
-plt.yticks(np.arange(y_tick_min,y_tick_max,y_tick_gap),fontsize = y_fontsize)
+plt.xticks(np.arange(6,13,2),fontsize = x_fontsize)
+plt.yticks(np.arange(-132,-124,y_tick_gap),fontsize = y_fontsize)
 plt.xlim((x_lim_min,x_lim_max))
 plt.ylim((y_lim_min,y_lim_max))
 
