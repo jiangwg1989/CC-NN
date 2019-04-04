@@ -88,7 +88,7 @@ matplotlib.rcParams['xtick.direction'] = 'in'
 matplotlib.rcParams['ytick.direction'] = 'in' 
 ax1 = fig_1.add_subplot(6,2,1)
 
-plt.tick_params(top=True,bottom=True,left=True,right=False)
+plt.tick_params(top=True,bottom=True,left=True,right=True)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
@@ -101,7 +101,7 @@ l1=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":3 }, hist_kws
 plt.title("origin datasets")
 plt.ylabel("count")
 #plt.xlabel("gs_energy (MeV)")
-#plt.legend(loc = 'upper left',frameon=False)
+#plt.legend(loc = 'upper left',frameon=True)
 plt.text(-28, 10, '$N_{max}4$-$10$', fontsize=10)
 plt.xticks(np.arange(x_tick_min,x_tick_max,x_tick_gap),fontsize = 0)
 plt.yticks(np.arange(y_tick_min,y_tick_max+0.01,y_tick_gap),fontsize = y_fontsize)
@@ -126,7 +126,7 @@ x_list_1 = raw_data_new_2[:,0]
 matplotlib.rcParams['xtick.direction'] = 'in' 
 matplotlib.rcParams['ytick.direction'] = 'in' 
 plt.subplot(623)
-plt.tick_params(top=True,bottom=True,left=True,right=False)
+plt.tick_params(top=True,bottom=True,left=True,right=True)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
@@ -161,7 +161,7 @@ x_list_1 = raw_data_new_2[:,0]
 matplotlib.rcParams['xtick.direction'] = 'in' 
 matplotlib.rcParams['ytick.direction'] = 'in' 
 plt.subplot(625)
-plt.tick_params(top=True,bottom=True,left=True,right=False)
+plt.tick_params(top=True,bottom=True,left=True,right=True)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
@@ -197,7 +197,7 @@ x_list_1 = raw_data_new_2[:,0]
 matplotlib.rcParams['xtick.direction'] = 'in' 
 matplotlib.rcParams['ytick.direction'] = 'in' 
 plt.subplot(627)
-plt.tick_params(top=True,bottom=True,left=True,right=False)
+plt.tick_params(top=True,bottom=True,left=True,right=True)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
@@ -232,7 +232,7 @@ x_list_1 = raw_data_new_2[:,0]
 matplotlib.rcParams['xtick.direction'] = 'in' 
 matplotlib.rcParams['ytick.direction'] = 'in' 
 plt.subplot(629)
-plt.tick_params(top=True,bottom=True,left=True,right=False)
+plt.tick_params(top=True,bottom=True,left=True,right=True)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
@@ -267,7 +267,7 @@ x_list_1 = raw_data_new_2[:,0]
 matplotlib.rcParams['xtick.direction'] = 'in' 
 matplotlib.rcParams['ytick.direction'] = 'in' 
 ax6 = fig_1.add_subplot(6,2,11)
-plt.tick_params(top=True,bottom=True,left=True,right=False)
+plt.tick_params(top=True,bottom=True,left=True,right=True)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
@@ -345,7 +345,7 @@ matplotlib.rcParams['xtick.direction'] = 'in'
 matplotlib.rcParams['ytick.direction'] = 'in' 
 ax1 = fig_1.add_subplot(6,2,2)
 
-plt.tick_params(top=True,bottom=True,left=True,right=False)
+plt.tick_params(top=True,bottom=True,left=True,right=True)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
@@ -383,7 +383,7 @@ x_list_1 = raw_data_new_2[:,0]
 matplotlib.rcParams['xtick.direction'] = 'in' 
 matplotlib.rcParams['ytick.direction'] = 'in' 
 plt.subplot(624)
-plt.tick_params(top=True,bottom=True,left=True,right=False)
+plt.tick_params(top=True,bottom=True,left=True,right=True)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
@@ -417,7 +417,7 @@ x_list_1 = raw_data_new_2[:,0]
 matplotlib.rcParams['xtick.direction'] = 'in' 
 matplotlib.rcParams['ytick.direction'] = 'in' 
 plt.subplot(626)
-plt.tick_params(top=True,bottom=True,left=True,right=False)
+plt.tick_params(top=True,bottom=True,left=True,right=True)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
@@ -452,7 +452,7 @@ x_list_1 = raw_data_new_2[:,0]
 matplotlib.rcParams['xtick.direction'] = 'in' 
 matplotlib.rcParams['ytick.direction'] = 'in' 
 plt.subplot(628)
-plt.tick_params(top=True,bottom=True,left=True,right=False)
+plt.tick_params(top=True,bottom=True,left=True,right=True)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
@@ -486,7 +486,7 @@ x_list_1 = raw_data_new_2[:,0]
 matplotlib.rcParams['xtick.direction'] = 'in' 
 matplotlib.rcParams['ytick.direction'] = 'in' 
 ax55 = fig_1.add_subplot(6,2,10)
-plt.tick_params(top=True,bottom=True,left=True,right=False)
+plt.tick_params(top=True,bottom=True,left=True,right=True)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
@@ -520,7 +520,7 @@ x_list_1 = raw_data_new_2[:,0]
 matplotlib.rcParams['xtick.direction'] = 'in' 
 matplotlib.rcParams['ytick.direction'] = 'in' 
 ax66 = fig_1.add_subplot(6,2,12)
-plt.tick_params(top=True,bottom=True,left=True,right=False)
+plt.tick_params(top=True,bottom=True,left=True,right=True)
 
 sns.set_palette("hls") 
 mpl.rc("figure")#, figsize=(6,4)) 
