@@ -88,7 +88,7 @@ matplotlib.rcParams['xtick.direction'] = 'in'
 matplotlib.rcParams['ytick.direction'] = 'in' 
 
 ax1 = fig_1.add_subplot(2,1,1)
-plt.tick_params(top='on',bottom='on',left='on',right='off')
+plt.tick_params(top='on',bottom='on',left='on',right='on')
 
 x     = raw_data[:,0]  
 mean  = raw_data[:,1]
@@ -165,7 +165,7 @@ matplotlib.rcParams['xtick.direction'] = 'in'
 matplotlib.rcParams['ytick.direction'] = 'in' 
 
 ax2 = fig_1.add_subplot(2,1,2)
-plt.tick_params(top='on',bottom='on',left='on',right='off')
+plt.tick_params(top='on',bottom='on',left='on',right='on')
 
 x     = raw_data[:,0]  
 mean  = raw_data[:,1]
