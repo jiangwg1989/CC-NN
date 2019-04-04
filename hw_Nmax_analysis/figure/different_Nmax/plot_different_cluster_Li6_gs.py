@@ -106,7 +106,7 @@ plt.errorbar(x,mean,error,linestyle="None",ecolor='g',zorder=5,capsize=capsize)#
 x     = raw_data2[:,0]  
 mean  = raw_data2[:,1]
 error = raw_data2[:,2]
-plt.plot(x,mean, color='crimson', linestyle = '',linewidth=0.5,marker='s', markerfacecolor='none',mew=1,markersize=5,zorder=1,label='IR extrapolation')
+plt.plot(x,mean, color='crimson', linestyle = '',linewidth=0.5,marker='o', markerfacecolor='none',mew=1,markersize=5,zorder=1,label='IR extrapolation')
 plt.errorbar(x,mean,error,linestyle="None",ecolor='crimson',zorder=1,capsize=capsize)
 
 #f2 = interp1d(x,mean,kind='quadratic',fill_value="extrapolate")
@@ -194,7 +194,7 @@ plt.errorbar(x,mean,error,linestyle="None",ecolor='g',zorder=5,capsize=capsize)
 x     = raw_data2[:,0]  
 mean  = raw_data2[:,1]
 error = raw_data2[:,2]
-plt.plot(x,mean, color='crimson', linestyle = '',linewidth=0.5,marker='s', markerfacecolor='none',mew=1,markersize=5,zorder=1,label='IR extrapolation')
+plt.plot(x,mean, color='crimson', linestyle = '',linewidth=0.5,marker='o', markerfacecolor='none',mew=1,markersize=5,zorder=1,label='IR extrapolation')
 plt.errorbar(x,mean,error,linestyle="None",ecolor='crimson' ,zorder=1,capsize=capsize)
 
 #f2 = interp1d(x,mean,kind='cubic',fill_value="extrapolate")
