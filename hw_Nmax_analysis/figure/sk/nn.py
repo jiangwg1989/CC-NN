@@ -78,7 +78,7 @@ ranksep = 1.6;
 	x4->{y1,y2,y3,y4,y5,y6,y7,y8,y9}[arrowhead = vee,arrowsize=0.5]
 	x5->{y1,y2,y3,y4,y5,y6,y7,y8,y9}[arrowhead = vee,arrowsize=0.5]
 	x6->{y1,y2,y3,y4,y5,y6,y7,y8}[lable="1",arrowhead = vee,arrowsize=0.5]
-        x6->y9[arrowhead = vee, arrowsize=0.5, lable="wn"]
+	x6->y9[arrowhead = vee, arrowsize=0.5, lable="wn"]
 
 	y1->{z1,z2,z3,z4}[arrowhead = vee,arrowsize=0.5]
 	y2->{z1,z2,z3,z4}[arrowhead = vee,arrowsize=0.5]
@@ -100,9 +100,9 @@ ranksep = 1.6;
 
 
 
-    AA[label="input layer",fontcolor = deepskyblue, fontname = Helvetica,fontsize=20,shape = box,color=none,fixedsize=false]
-	BB[label="hidden layer(s)",fontcolor = deepskyblue,fontname = Helvetica,fontsize=20,shape = box,color=none,fixedsize=false]
-	CC[label="output layer",fontcolor = deepskyblue,fontname = Helvetica,fontsize=20,shape = box,color=none,fixedsize=false]
+    AA[label="input layer",fontcolor = black, fontname = Helvetica,fontsize=20,shape = box,color=none,fixedsize=false]
+	BB[label="hidden layer(s)",fontcolor = black,fontname = Helvetica,fontsize=20,shape = box,color=none,fixedsize=false]
+	CC[label="output layer",fontcolor = black,fontname = Helvetica,fontsize=20,shape = box,color=none,fixedsize=false]
 	#DD[label="loss=f(y_pre,y_true)",fontcolor = deepskyblue,fontname = Helvetica,fontsize=20,shape = box,color=none,fixedsize=false]
 	AA->BB->CC [color=none]
 }

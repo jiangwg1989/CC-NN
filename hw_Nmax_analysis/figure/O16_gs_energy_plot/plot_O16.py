@@ -12,7 +12,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import keras.losses
-
+import matplotlib.gridspec as gridspec
 
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 from keras.models import Sequential
@@ -395,7 +395,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     # load model
     #
 
-    model.load_weights('cluster_1.h5') 
+    model.load_weights('gs.h5') 
     predic_model_1 = Model(inputs =input_data, outputs = predictions)
     
   
@@ -433,10 +433,10 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     raw_predic_data_7  = raw_predic_data[np.where(raw_predic_data[:,1]==14)]
     raw_predic_data_8  = raw_predic_data[np.where(raw_predic_data[:,1]==16)]
     raw_predic_data_9  = raw_predic_data[np.where(raw_predic_data[:,1]==18)]
-    raw_predic_data_10 = raw_predic_data[np.where(raw_predic_data[:,1]==20)]
+    raw_predic_data_10 = raw_predic_data[np.where(raw_predic_data[:,1]==100)]
 
 
-    temp = (raw_predic_data[np.where(raw_predic_data[:,1]== 200)])
+    temp = (raw_predic_data[np.where(raw_predic_data[:,1]== 100)])
     gs_converge = np.min(temp[:,0])
    
  
@@ -470,15 +470,16 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     y_list_10= raw_predic_data_10[:,0]
  
     
-    fig1 = plt.figure('fig1')
-    ax = plt.subplot(111)
+#    fig1 = plt.figure('fig1')
+#    ax = plt.subplot(111)
     cluster_1_color = 'green'
-    line_width = 2.2
-    l1=plt.scatter(x_list_1,y_list_1,color='k',s = 30, marker = 's', zorder= 4,label=r'$\rm{NNLO}_{\rm{opt}}$')
-    l2 =plt.plot(x_list_2 ,y_list_2 ,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='-', zorder=3 ,label='cluster 1')
-    l3 =plt.plot(x_list_3 ,y_list_3 ,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='-', zorder=3 )
-    l4 =plt.plot(x_list_4 ,y_list_4 ,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='-', zorder=3 )
-    l5 =plt.plot(x_list_5 ,y_list_5 ,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='-', zorder=3 )
+    line_width = 1.5
+    l1=plt.scatter(x_list_1,y_list_1,color='k',s = 10, marker = 's', zorder= 4,label='CCSD(T)')#r'$\rm{NNLO}_{\rm{opt}}$')
+    l2 =plt.plot(x_list_2 ,y_list_2 ,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='--', zorder=3 ,label='NN')
+    l3 =plt.plot(x_list_3 ,y_list_3 ,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='--', zorder=3 )
+    l4 =plt.plot(x_list_4 ,y_list_4 ,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='--', zorder=3 )
+    l5 =plt.plot(x_list_5 ,y_list_5 ,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='--', zorder=3 )
+    l10=plt.plot(x_list_10,y_list_10,alpha=0.8,lw=line_width, color=cluster_1_color,linestyle='--', zorder=3 )
 #    l6 =plt.plot(x_list_6 ,y_list_6 ,alpha=0.5, color=cluster_1_color,linestyle='--')
 #    l7 =plt.plot(x_list_7 ,y_list_7 ,alpha=0.5, color=cluster_1_color,linestyle='--')
 #    l8 =plt.plot(x_list_8 ,y_list_8 ,alpha=0.5, color=cluster_1_color,linestyle='--')
@@ -489,123 +490,21 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     #l6=fig1.scatter(x_list_2,y_list_2,color='c',linestyle='--',marker=',')
     #fig1.scatter(x_list_2,y_list_2,color='m',linestyle='--',marker=',')
     #plt.legend(loc = 'upper left')
-
-
-    model.load_weights('cluster_2.h5') 
-    predic_model_2 = Model(inputs =input_data, outputs = predictions)
- 
-
-    y_test = predic_model_2.predict(x_test)
-    raw_predic_data = np.concatenate((y_test,x_test),axis=1)
-    
-    #print "raw_predic_data="+str(raw_predic_data)
-    
-    #fig,(ax0,ax1) = plt.subplots(nrows = 2, figsize=(9,9))
-    
-    x_list_1 = raw_data[:,2] 
-    y_list_1 = raw_data[:,0]
-    
-    raw_predic_data_2  = raw_predic_data[np.where(raw_predic_data[:,1]==4)]
-    raw_predic_data_3  = raw_predic_data[np.where(raw_predic_data[:,1]==6)]
-    raw_predic_data_4  = raw_predic_data[np.where(raw_predic_data[:,1]==8)]
-    raw_predic_data_5  = raw_predic_data[np.where(raw_predic_data[:,1]==10)]
-    raw_predic_data_6  = raw_predic_data[np.where(raw_predic_data[:,1]==12)]
-    raw_predic_data_7  = raw_predic_data[np.where(raw_predic_data[:,1]==14)]
-    raw_predic_data_8  = raw_predic_data[np.where(raw_predic_data[:,1]==16)]
-    raw_predic_data_9  = raw_predic_data[np.where(raw_predic_data[:,1]==18)]
-    raw_predic_data_10 = raw_predic_data[np.where(raw_predic_data[:,1]==20)]
-
-
-    temp = (raw_predic_data[np.where(raw_predic_data[:,1]== 200)])
-    gs_converge = np.min(temp[:,0])
+    plt.text(34.2,-114.6,r'$N_{\rm{max}}$=$6$',size=8)
+    plt.text(41.7,-117,r'$N_{\rm{ma}x}$=$8$',size=8)
+    plt.text(43.5,-122,r'$N_{\rm{max}}$=$10$',size=8)
+    plt.text(42.5,-129.8,r'$N_{\rm{max}}$=$100$',size=8)
+    plt.text(11,-131.25,'-131.18',color='g',size=8)
    
- 
-    
-    x_list_2 = raw_predic_data_2[:,2]
-    y_list_2 = raw_predic_data_2[:,0]
-    
-    x_list_3 = raw_predic_data_3[:,2]
-    y_list_3 = raw_predic_data_3[:,0]
-    
-    x_list_4 = raw_predic_data_4[:,2]
-    y_list_4 = raw_predic_data_4[:,0]
-    
-    x_list_5 = raw_predic_data_5[:,2]
-    y_list_5 = raw_predic_data_5[:,0]
-    
-    
-    x_list_6 = raw_predic_data_6[:,2]
-    y_list_6 = raw_predic_data_6[:,0]
-    
-    x_list_7 = raw_predic_data_7[:,2]
-    y_list_7 = raw_predic_data_7[:,0]
-    
-    x_list_8 = raw_predic_data_8[:,2]
-    y_list_8 = raw_predic_data_8[:,0]
-
-    x_list_9 = raw_predic_data_9[:,2]
-    y_list_9 = raw_predic_data_9[:,0]
- 
-    x_list_10= raw_predic_data_10[:,2]
-    y_list_10= raw_predic_data_10[:,0]
- 
-    
-    cluster_2_color = 'crimson'
-    ll2 = plt.plot(x_list_2 ,y_list_2 ,alpha=0.8,lw=line_width, color=cluster_2_color,linestyle='--',zorder=2 ,label='cluster 2')
-    ll3 = plt.plot(x_list_3 ,y_list_3 ,alpha=0.8,lw=line_width, color=cluster_2_color,linestyle='--',zorder=2 )
-    ll4 = plt.plot(x_list_4 ,y_list_4 ,alpha=0.8,lw=line_width, color=cluster_2_color,linestyle='--',zorder=2 )
-    ll5 = plt.plot(x_list_5 ,y_list_5 ,alpha=0.8,lw=line_width, color=cluster_2_color,linestyle='--',zorder=2 )
-#    ll6 = plt.plot(x_list_6 ,y_list_6 ,alpha=0.5, color=cluster_2_color,linestyle=':')
-#    ll7 = plt.plot(x_list_7 ,y_list_7 ,alpha=0.5, color=cluster_2_color,linestyle=':')
-#    ll8 = plt.plot(x_list_8 ,y_list_8 ,alpha=0.5, color=cluster_2_color,linestyle=':')
-#    ll9 = plt.plot(x_list_9 ,y_list_9 ,alpha=0.5, color=cluster_2_color,linestyle=':')
-#    ll10= plt.plot(x_list_10,y_list_10,alpha=0.5, color=cluster_2_color,linestyle=':')
- 
-
-
-
-
-
-
-
-
-#    xmajorLocator   = MultipleLocator(10)
-#    #xmajorFormatter = FormatStrFormatter('%5f')
-#    xminorLocator   = MultipleLocator(2)
-#    
-#    
-#    ymajorLocator   = MultipleLocator(1)
-#    #ymajorFormatter = FormatStrFormatter('%1.1d')
-#    yminorLocator   = MultipleLocator(1)
-#
-#    ax.xaxis.set_major_locator(xmajorLocator)
-#    #ax.xaxis.set_major_formatter(xmajorFormatter)
-#    ax.yaxis.set_major_locator(ymajorLocator)
-#    #ax.yaxis.set_major_formatter(ymajorFormatter)
-#    ax.xaxis.set_minor_locator(xminorLocator)
-#    ax.yaxis.set_minor_locator(yminorLocator)
-#    ax.xaxis.grid(True, which='major') 
-#    ax.yaxis.grid(True, which='major')
-
-    plt.text(60,-14.4,r'$N_{\rm{max}}$=$4$',size=13)
-    plt.text(66,-18.5,r'$N_{\rm{max}}$=$6$',size=13)
-    plt.text(66.3,-22.2,r'$N_{\rm{max}}$=$8$',size=13)
-    plt.text(65,-26.5,r'$N_{\rm{max}}$=$10$',size=13)
-        
-    plt.legend( bbox_to_anchor=(0.05,1), loc='upper left',fancybox=True,shadow=True, prop = {'size':15})
+    plt.legend( bbox_to_anchor=(0.08,1), loc='upper left',fancybox=True,shadow=True, prop = {'size':10})
 #    plt.title("gs(infinite)="+str(gs_converge))
-    plot_path = 'cluster_compare.pdf'
-    plt.ylim((-28,-13))  
-    plt.xlim((15,75))
-    plt.xticks(fontsize=18)
-    plt.yticks(fontsize=18)
-    plt.xlabel(r"$\hbar \omega \ \rm(MeV)$",fontsize=18)
-    plt.ylabel(r"$E_{\rm{g.s.}}\ \rm(MeV)$",fontsize=18)
-    #plt.subplots_adjust(right = 0.7)
-    fig1.tight_layout()
-    plt.savefig(plot_path)
-    plt.close('all')
-    #fig1.show()
+#    plot_path = 'cluster_compare.eps'
+    plt.xlim((10,50))
+    plt.xticks(fontsize=10)
+    plt.yticks(np.arange(-135,-113,5),fontsize=10)
+    plt.ylim((-133,-113))  
+    plt.xlabel(r"$\hbar \omega \ \rm(MeV)$",fontsize=12)
+    plt.ylabel(r"$E_{\rm{g.s.}}\ \rm(MeV)$             ",fontsize=13)
 
 
 
@@ -616,9 +515,9 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
 #
 # all NN parameters
 #
-nuclei = 'He4'
+nuclei = 'O16'
 target_option = 'gs'
-input_path = 'He4E_NNLOopt.txt'
+input_path = 'O16E_NNLOopt_CC.txt'
 #output_path = './result/gs/'
 data_num = input_raw_data_count(input_path)
 # earlystopping parameters
@@ -666,14 +565,101 @@ corr_weight= 1.
 #            f_3.write('{:>-10.5f}'.format(gs_converge_all[loop_all])+'   ')
 #            f_3.write('{:>-20.15f}'.format(loss_all[loop_all])+'   ')
 #            f_3.write('{:>-20.15f}'.format(val_loss_all[loop_all])+'\n')
+
+
+##########################################################
+##########################################################
+# plot gs
+##########################################################
+##########################################################
+capsize= 2
+
+raw_data = np.zeros((4,3))
+file_path_1= "O16_gs_different_Nmax.txt"
+input_file_2(file_path_1,raw_data)
+fig_1 = plt.figure('fig_1',figsize=[4,5])
+plt.subplots_adjust(wspace =0, hspace =0.5)
+
+gs    = gridspec.GridSpec(3,3)
+ax1   = fig_1.add_subplot(gs[0:2,:])
+#plt.subplots_adjust(wspace =0.3, hspace =0.2)
+
+matplotlib.rcParams['xtick.direction'] = 'in' 
+matplotlib.rcParams['ytick.direction'] = 'in' 
+
+#ax1 = fig_1.add_subplot(2,1,1)
+plt.tick_params(top=True,bottom=True,left=True,right=True)
+
+
+
+
+
+
 max_nmax_fit = 20
 output_path = './'
 
 NN_all(input_path=input_path,output_path=output_path,data_num=data_num,monitor=monitor,min_delta=min_delta,patience=patience,epochs=epochs,batch_size=batch_size,input_dim=input_dim,output_dim=output_dim,interpol_count=interpol_count,max_nmax_fit=max_nmax_fit,sigma=sigma)
 
 
+##########################################################
+##########################################################
+# plot gs
+##########################################################
+##########################################################
+
+raw_data = np.zeros((4,3))
+file_path_1= "O16_gs_different_Nmax.txt"
+input_file_2(file_path_1,raw_data)
+
+ax2 = fig_1.add_subplot(gs[2,:])
+#plt.subplots_adjust(wspace =0.3, hspace =0.2)
+
+
+#ax1 = fig_1.add_subplot(2,1,1)
+plt.tick_params(top=True,bottom=True,left=True,right=False)
+
+x     = raw_data[:,0]
+mean  = raw_data[:,1]
+error = raw_data[:,2]/2.355
+
+plt.plot(x,mean, color='g', linestyle = '',linewidth=0.5,marker='s', markerfacecolor='none',mew=1,markersize=5,zorder=5,label='NN extrapolation')
+plt.errorbar(x,mean,error,linestyle="None",ecolor='g',capsize=capsize)
+
+
+##########################################################
+### setting parameters
+##########################################################
+x_fontsize = 10
+y_fontsize = 10
+x_lim_min  = 5
+x_lim_max  = 13
+y_lim_min  = -133
+y_lim_max  = -125
+x_tick_min = x_lim_min
+x_tick_max = y_lim_max
+x_tick_gap = 2
+y_tick_min = y_lim_min
+y_tick_max = -120
+y_tick_gap = 2
+y_label_f  = 12
+
+
+plt.hlines(-130.176, x_lim_min, x_lim_max,colors='g', linestyle='--')
+plt.text(5.2,-131.3,'-131.18',color='g',size=8)
+
+plt.xlabel(r'max($N_{\rm{max}})$',fontsize=y_label_f)
+#plt.ylabel(r'$E_{gs} \ \rm{(MeV)}$',fontsize=y_label_f)
+plt.xticks(np.arange(6,13,2),fontsize = x_fontsize)
+plt.yticks(np.arange(-132,-124,y_tick_gap),fontsize = y_fontsize)
+plt.xlim((x_lim_min,x_lim_max))
+plt.ylim((y_lim_min,y_lim_max))
+
+
+
+
+plot_path = 'different_Nmax_observables_O16.pdf'
+plt.savefig(plot_path,bbox_inches='tight')
+
+
+
     
-#print 'gs_converge_all='+str(gs_converge_all)
-
-
-#input()G

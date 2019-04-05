@@ -454,7 +454,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
 
     
     #plt.title("He4_Multi-NN_Nmax4~20")
-    plt.xlabel(r'$E_{gs}\quad \rm{(MeV)}$',fontsize=20)
+    plt.xlabel(r'$E_{\rm{g.s.}}$ $\rm{(MeV)}$',fontsize=20)
     plt.ylabel("$loss$",fontsize=20)
     #plt.legend(loc = 'lower left')
     plt.yticks(np.arange(0,0.041,0.01),fontsize=15)

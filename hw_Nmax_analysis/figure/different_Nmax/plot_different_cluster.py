@@ -135,7 +135,7 @@ y_label_f  = 12
 
 
 #plt.xlabel()
-plt.ylabel(r'$E_{gs} \ \rm{(MeV)}$',fontsize=y_label_f)
+plt.ylabel(r'$E_{\rm{g.s.}} \ \rm{(MeV)}$',fontsize=y_label_f)
 #plt.xticks([])
 plt.yticks(np.arange(y_tick_min,y_tick_max,y_tick_gap),fontsize = y_fontsize)
 plt.xticks(fontsize=False,color='white')
@@ -208,7 +208,7 @@ y_label_f  = 12
 plt.legend(loc=4,frameon=False,fontsize=9,labelspacing=0.3,handletextpad=0.1)
 
 
-plt.xlabel(r'$N_{max}$',fontsize=y_label_f)
+plt.xlabel(r'max($N_{\rm{max}}$)',fontsize=y_label_f)
 plt.ylabel(r'$r \ \rm{(fm)}$',fontsize=y_label_f)
 #plt.xticks([])
 plt.yticks(np.arange(y_tick_min,y_tick_max,y_tick_gap),fontsize = y_fontsize)
