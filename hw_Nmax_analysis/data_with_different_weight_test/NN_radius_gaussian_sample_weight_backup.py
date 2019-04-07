@@ -103,7 +103,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
     x_new = np.zeros((nmax_count,interpol_count))
     y_new = np.zeros((nmax_count,interpol_count))
     interpol_count_tot = 0   
-   
+    #print(raw_data)
     # interpolation for each namx 
     for loop1 in range(0,nmax_count):
         raw_data_new = raw_data[np.where(raw_data[:,1]==(loop1*2+nmax_min))]
@@ -480,9 +480,9 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
 #
 # all NN parameters
 #
-nuclei = 'Li6'
+nuclei = 'He6'
 target_option = 'radius'
-input_path = 'Li6R_NNLOopt.txt'
+input_path = 'He6R_NNLOopt.txt'
 #output_path = './result/gs/'
 data_num = input_raw_data_count(input_path)
 # earlystopping parameters
@@ -515,7 +515,7 @@ os.system('mkdir '+nuclei)
 os.system('mkdir '+nuclei+'/'+target_option)        
 
 
-for max_nmax_fit in range(14,15,2):
+for max_nmax_fit in range(18,15,-2):
     os.system('mkdir '+nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit))
     with open(nuclei+'/'+target_option+'/radius-nmax4-'+str(max_nmax_fit)+'/'+'radius_NN_info.txt','a') as f_3:
         #f_3.read()
