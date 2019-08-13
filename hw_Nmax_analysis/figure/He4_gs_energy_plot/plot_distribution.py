@@ -98,7 +98,7 @@ l1=sns.distplot(x_list_1,bins=15,kde_kws={"color":"seagreen", "lw":3 }, hist_kws
 #l = plt.scatter(x_list,y_list,color='k',linestyle='--',s = 10, marker = 'x', label='E(infinite)')
 #
 #
-plt.title("origin datasets")
+plt.title("original datasets")
 plt.ylabel("count")
 #plt.xlabel("gs_energy (MeV)")
 #plt.legend(loc = 'upper left',frameon=True)

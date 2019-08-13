@@ -24,7 +24,7 @@ from keras.layers.core import Lambda
 
 
 def normfun(x,mu,sigma):
-    pdf = np.exp(-((x - mu)**2)/(2*sigma**2)) / (sigma * np.sqrt(2*np.pi))
+    pdf = np.exp(-((x - mu)**2)/(2.*sigma**2)) / (sigma * np.sqrt(2*np.pi))
     return pdf
 
 
@@ -465,7 +465,6 @@ val_loss_all = np.zeros(run_times_end)
 
 os.system('mkdir '+nuclei)
 os.system('mkdir '+nuclei+'/'+target_option)        
-
 
 for max_nmax_fit in range(20,21,2):
     os.system('mkdir '+nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit))

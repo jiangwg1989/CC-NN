@@ -435,9 +435,9 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,inp
 #
 # all NN parameters
 #
-nuclei = 'O16'
+nuclei = 'He8'
 target_option = 'gs'
-input_path = 'O16E_NNLOopt_CC.txt'
+input_path = 'He8E_NNLOopt.txt'
 #output_path = './result/gs/'
 data_num = input_raw_data_count(input_path)
 # earlystopping parameters
@@ -468,7 +468,7 @@ os.system('mkdir '+nuclei)
 os.system('mkdir '+nuclei+'/'+target_option)        
 
 
-for max_nmax_fit in range(6,5,-2):
+for max_nmax_fit in range(12,7,-2):
     os.system('mkdir '+nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit))
     with open(nuclei+'/'+target_option+'/gs-nmax4-'+str(max_nmax_fit)+'/'+'gs_NN_info.txt','a') as f_3:
         #f_3.read()
