@@ -128,7 +128,7 @@ def make_random_vec(dims):
 #
 # walk with random_vec, find out how far could we go the make the loss double. 
 #
-def random_vec_walk_2timeloss(my_model,model_str,x_in,y_in,sample_weights,origin_flat_weights,origin_unflat_weights,origin_loss,random_vec):
+def random_vec_walk_2timeloss(my_model,model_str,x_in,y_in,sample_weights,origin_flat_weights,origin_unflat_weights,origin_loss,gs_origin,random_vec):
     def new_loss_cal(a):
         weights_flat_temp = origin_flat_weights + random_vec*a
         weights_unflat_temp = unflattern_weights(model_str=model_str,weights_new=weights_flat_temp,weights=origin_unflat_weights)    
@@ -136,6 +136,8 @@ def random_vec_walk_2timeloss(my_model,model_str,x_in,y_in,sample_weights,origin
         loss_new = output_loss(my_model,x_in,y_in,sample_weights)
         return(loss_new)
 
+
+    
     #  try 0, 0.05, 0.1
 #    x = [0,0.005,0.01]
 #    y = np.zeros(len(x))
@@ -155,8 +157,10 @@ def random_vec_walk_2timeloss(my_model,model_str,x_in,y_in,sample_weights,origin
     a_new = 0.005
     y_old = origin_loss
     y_new = new_loss_cal( a= a_new)
-    y_target = 2* origin_loss    # two time loss
+    y_target = 1000 * origin_loss    # two time loss
     target_precision = 0.1
+
+    origin_weights_norm = np.linalg.norm(origin_flat_weights)
 
     loop_max = 0
     while (np.abs( y_new-y_target ) > (target_precision*origin_loss) ) :
@@ -186,9 +190,11 @@ def random_vec_walk_2timeloss(my_model,model_str,x_in,y_in,sample_weights,origin
     weights_unflat_temp = unflattern_weights(model_str=model_str,weights_new=weights_flat_temp,weights=origin_unflat_weights)    
     my_model.set_weights(weights_unflat_temp)
     gs_new = model_predict_gs(my_model)
+    gs_error = np.abs( gs_new-gs_origin)
+    norm_ratio = a_new/origin_weights_norm
 
-    #print("a_new ="+str(a_new)+"  loss_new="+str(y_new)+"  gs_new="+str(gs_new))
-    return  gs_new
+    print("a_new ="+str(a_new)+"   norm_ratio = "+str(norm_ratio)+"  loss_new="+str(y_new)+"  gs_new="+str(gs_new)+"   error = "+str(gs_error))
+    return  gs_new,gs_error,norm_ratio
     
 def model_predict_gs(my_model):
     #
@@ -221,7 +227,6 @@ def NN_uncertainty(model_h5file_path,max_nmax_fit,input_dim):
     # 
     raw_data = np.zeros((data_num,3),dtype = np.float)
     input_file_1(raw_data_path,raw_data,gs_energy_line,nmax_line,hw_line)
-   
 
  
     #
@@ -443,9 +448,13 @@ def NN_uncertainty(model_h5file_path,max_nmax_fit,input_dim):
  
     origin_gs   = model_predict_gs(my_model)
 
-    print("origin_loss="+str(origin_loss)) 
+    origin_weights_norm = np.linalg.norm(weights_flat_origin)
 
+    print("origin_loss="+str(origin_loss)) 
     print("origin_gs="+str(origin_gs))
+    print("origin_weights_norm="+str(origin_weights_norm))
+
+
 ##
 ##  first derivative
 ##   
@@ -479,13 +488,16 @@ def NN_uncertainty(model_h5file_path,max_nmax_fit,input_dim):
 # calculate double loss walk along random vec direction.
 #
     
+    new_pre_gs_error = np.zeros(random_vec_num)
+    norm_ratio       = np.zeros(random_vec_num)
     #print("lalal="+str(random_vec[:,1]))
-
+    
     model_pre = np.zeros(random_vec_num)
     for loop1 in range(random_vec_num):
-        model_pre[loop1] = random_vec_walk_2timeloss(my_model=my_model,model_str=model_str,x_in=x_train,y_in=y_train,sample_weights=raw_data_new[:,3],origin_flat_weights=weights_flat_origin,origin_unflat_weights=weights_unflat_origin,origin_loss=origin_loss,random_vec=random_vec[:,loop1])
+        model_pre[loop1],new_pre_gs_error[loop1],norm_ratio[loop1] = random_vec_walk_2timeloss(my_model=my_model,model_str=model_str,x_in=x_train,y_in=y_train,sample_weights=raw_data_new[:,3],origin_flat_weights=weights_flat_origin,origin_unflat_weights=weights_unflat_origin,origin_loss=origin_loss,gs_origin=origin_gs,random_vec=random_vec[:,loop1])
     print ("mean_model_pre_gs_error = "+str(np.mean(model_pre)))
 
+    print ('max_error = '+str(np.amax(new_pre_gs_error))+'   norm_ratio = '+str(norm_ratio[np.where(new_pre_gs_error[:]==np.amax(new_pre_gs_error))]))
 
     # calculate the variant of the new predict gs with two times loss
     variant = 0
@@ -494,6 +506,7 @@ def NN_uncertainty(model_h5file_path,max_nmax_fit,input_dim):
     variant = variant / random_vec_num
     variant = np.sqrt(variant)
     print ("new_pre_gs_variant = "+str(variant))
+    print ("average_ratio = "+str(np.mean(norm_ratio)))
 
 #    #
 #    # get model prediction
@@ -720,9 +733,8 @@ val_loss_all = np.zeros(run_times_end)
 #for loop1 in range(100):
 loop1 = 3
 max_nmax_fit = 22
-folder_num   = 5
+folder_num   = 1
 new_pre_gs_variant = np.zeros(folder_num)
-
 
 for loop1 in range (folder_num):
 
@@ -733,6 +745,7 @@ for loop1 in range (folder_num):
         new_pre_gs_variant[loop1] = NN_uncertainty(model_h5file_path=model_h5file_path,max_nmax_fit=max_nmax_fit,input_dim=input_dim)
     else:
         new_pre_gs_variant[loop1] = 0
+
 
 mean_variant = 0
 mean_variant_count = 0
