@@ -450,7 +450,7 @@ def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,bat
     g.plot_joint(plt.scatter, c="m", s=20, linewidth=1, marker="x")
     g.ax_joint.collections[0].set_alpha(0)  
     g.set_axis_labels("$X$", "$Y$")
-    g.ax_joint.legend_.remove()
+    #g.ax_joint.legend_.remove()
 
     
     #plt.title("He4_Multi-NN_Nmax4~20")
