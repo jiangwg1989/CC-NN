@@ -128,7 +128,7 @@ def make_random_vec(dims):
 #
 # walk with random_vec, find out how far could we go the make the loss double. 
 #
-def random_vec_walk_2timeloss(my_model,model_str,x_in,y_in,sample_weights,origin_flat_weights,origin_unflat_weights,origin_loss,gs_origin,random_vec):
+def random_vec_walk_2timeloss(my_model,model_str,x_in,y_in,sample_weights,origin_flat_weights,origin_unflat_weights,origin_loss,gs_origin,random_vec,loss_multiple):
     def new_loss_cal(a):
         weights_flat_temp = origin_flat_weights + random_vec*a
         weights_unflat_temp = unflattern_weights(model_str=model_str,weights_new=weights_flat_temp,weights=origin_unflat_weights)    
@@ -157,7 +157,7 @@ def random_vec_walk_2timeloss(my_model,model_str,x_in,y_in,sample_weights,origin
     a_new = 0.005
     y_old = origin_loss
     y_new = new_loss_cal( a= a_new)
-    y_target = 1000 * origin_loss    # two time loss
+    y_target = loss_multiple * origin_loss    # two time loss
     target_precision = 0.1
 
     origin_weights_norm = np.linalg.norm(origin_flat_weights)
@@ -193,7 +193,7 @@ def random_vec_walk_2timeloss(my_model,model_str,x_in,y_in,sample_weights,origin
     gs_error = np.abs( gs_new-gs_origin)
     norm_ratio = a_new/origin_weights_norm
 
-    print("a_new ="+str(a_new)+"   norm_ratio = "+str(norm_ratio)+"  loss_new="+str(y_new)+"  gs_new="+str(gs_new)+"   error = "+str(gs_error))
+#    print("a_new ="+str(a_new)+"   norm_ratio = "+str(norm_ratio)+"  loss_new="+str(y_new)+"  gs_new="+str(gs_new)+"   error = "+str(gs_error))
     return  gs_new,gs_error,norm_ratio
     
 def model_predict_gs(my_model):
@@ -221,7 +221,7 @@ def model_predict_gs(my_model):
 
 
 #def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,input_dim,output_dim,interpol_count,max_nmax_fit,sigma):
-def NN_uncertainty(model_h5file_path,max_nmax_fit,input_dim):   
+def NN_uncertainty(model_h5file_path,max_nmax_fit,input_dim,loss_multiple):   
     #
     # Take in all the input data from file
     # 
@@ -386,7 +386,7 @@ def NN_uncertainty(model_h5file_path,max_nmax_fit,input_dim):
     #
     model_str=[2,8,1]
     total_parameter_num = model_str[0]*model_str[1]+model_str[1]+ model_str[1]*model_str[2]+model_str[2]
-    print(total_parameter_num)
+#    print(total_parameter_num)
     my_model = load_model(model_h5file_path)
 
     # get the weights from the model (its a list)
@@ -494,10 +494,12 @@ def NN_uncertainty(model_h5file_path,max_nmax_fit,input_dim):
     
     model_pre = np.zeros(random_vec_num)
     for loop1 in range(random_vec_num):
-        model_pre[loop1],new_pre_gs_error[loop1],norm_ratio[loop1] = random_vec_walk_2timeloss(my_model=my_model,model_str=model_str,x_in=x_train,y_in=y_train,sample_weights=raw_data_new[:,3],origin_flat_weights=weights_flat_origin,origin_unflat_weights=weights_unflat_origin,origin_loss=origin_loss,gs_origin=origin_gs,random_vec=random_vec[:,loop1])
-    print ("mean_model_pre_gs_error = "+str(np.mean(model_pre)))
+        model_pre[loop1],new_pre_gs_error[loop1],norm_ratio[loop1] = random_vec_walk_2timeloss(my_model=my_model,model_str=model_str,x_in=x_train,y_in=y_train,sample_weights=raw_data_new[:,3],origin_flat_weights=weights_flat_origin,origin_unflat_weights=weights_unflat_origin,origin_loss=origin_loss,gs_origin=origin_gs,random_vec=random_vec[:,loop1],loss_multiple=loss_multiple)
+    #print ("mean_model_pre_gs_error = "+str(np.mean(model_pre)))
 
-    print ('max_error = '+str(np.amax(new_pre_gs_error))+'   norm_ratio = '+str(norm_ratio[np.where(new_pre_gs_error[:]==np.amax(new_pre_gs_error))]))
+    max_error = np.amax(new_pre_gs_error)
+    norm_ratio = norm_ratio[np.where(new_pre_gs_error[:]==np.amax(new_pre_gs_error))]
+    print ('max_error = '+str(np.amax(max_error))+'   norm_ratio = '+str(norm_ratio))
 
     # calculate the variant of the new predict gs with two times loss
     variant = 0
@@ -505,193 +507,10 @@ def NN_uncertainty(model_h5file_path,max_nmax_fit,input_dim):
         variant = variant + np.square(model_pre[loop1]-origin_gs)        
     variant = variant / random_vec_num
     variant = np.sqrt(variant)
-    print ("new_pre_gs_variant = "+str(variant))
-    print ("average_ratio = "+str(np.mean(norm_ratio)))
+    #print ("new_pre_gs_variant = "+str(variant))
+    #print ("average_ratio = "+str(np.mean(norm_ratio)))
 
-#    #
-#    # get model prediction
-#    #
-#    count = len(range(4,204,1))*len(range(5,121,1))
-#    x_test = np.zeros((count,2),dtype = np.float)
-#    
-#    loop3 = 0
-#    
-#    
-#    for loop1 in range(4,204,1):
-#        for loop2 in range(5,121,1):
-#            x_test[loop3][0] = loop1 
-#            x_test[loop3][1] = loop2 
-#            loop3 = loop3 + 1
-#    
-#    #print x_test
-#    
-#    y_test = my_model.predict(x_test)
-#    
-#    raw_predic_data = np.concatenate((y_test,x_test),axis=1)
-#    
-#    #print "raw_predic_data="+str(raw_predic_data)
-#    
-#    #fig,(ax0,ax1) = plt.subplots(nrows = 2, figsize=(9,9))
-#    
-##    x_list_1 = raw_data[:,2] 
-##    y_list_1 = raw_data[:,0]
-##    
-##    raw_predic_data_4 = raw_predic_data[np.where(raw_predic_data[:,1]==4)]
-##    raw_predic_data_8 = raw_predic_data[np.where(raw_predic_data[:,1]==8)]
-##    raw_predic_data_12 = raw_predic_data[np.where(raw_predic_data[:,1]==12)]
-##    raw_predic_data_20 = raw_predic_data[np.where(raw_predic_data[:,1]==20)]
-##    raw_predic_data_40 = raw_predic_data[np.where(raw_predic_data[:,1]==40)]
-##    raw_predic_data_60 = raw_predic_data[np.where(raw_predic_data[:,1]==100)]
-#    
-#    temp = (raw_predic_data[np.where(raw_predic_data[:,1]== 200)])
-#    gs_converge = np.min(temp[:,0])
- 
-    
-#    x_list_2 = raw_predic_data_4[:,2]
-#    y_list_2 = raw_predic_data_4[:,0]
-#    
-#    x_list_3 = raw_predic_data_8[:,2]
-#    y_list_3 = raw_predic_data_8[:,0]
-#    
-#    x_list_4 = raw_predic_data_12[:,2]
-#    y_list_4 = raw_predic_data_12[:,0]
-#    
-#    x_list_5 = raw_predic_data_20[:,2]
-#    y_list_5 = raw_predic_data_20[:,0]
-#    
-#    
-#    x_list_6 = raw_predic_data_40[:,2]
-#    y_list_6 = raw_predic_data_40[:,0]
-#    
-#    x_list_7 = raw_predic_data_60[:,2]
-#    y_list_7 = raw_predic_data_60[:,0]
-#    
-#    
-#    fig1 = plt.figure('fig1')
-#    ax = plt.subplot(111)
-#    l1=plt.scatter(x_list_1,y_list_1,color='k',linestyle='--',s = 10, marker = 'x', label='CC_calculation')
-#    l2=plt.plot(x_list_2,y_list_2,color='y',linestyle='--',label='NN_Nmax_4')
-#    l3=plt.plot(x_list_3,y_list_3,color='r',linestyle='--',label='NN_Nmax_8')
-#    l4=plt.plot(x_list_4,y_list_4,color='g',linestyle='--',label='NN_Nmax_12')
-#    l5=plt.plot(x_list_5,y_list_5,color='c',linestyle='--',label='NN_Nmax_20')
-#    
-#    l6=plt.plot(x_list_6,y_list_6,color='m',linestyle='--',label='NN_Nmax_40')
-#    l7=plt.plot(x_list_7,y_list_7,color='b',linestyle='--',label='NN_Nmax_100')
-#    #l4=fig1.scatter(x_list_2,y_list_2,color='y',linestyle='--',marker=',')
-#    #l5=fig1.scatter(x_list_2,y_list_2,color='r',linestyle='--',marker=',')
-#    #l6=fig1.scatter(x_list_2,y_list_2,color='c',linestyle='--',marker=',')
-#    #fig1.scatter(x_list_2,y_list_2,color='m',linestyle='--',marker=',')
-#    #plt.legend(loc = 'upper left')
-#
-#    xmajorLocator   = MultipleLocator(10)
-#    #xmajorFormatter = FormatStrFormatter('%5f')
-#    xminorLocator   = MultipleLocator(2)
-#    
-#    
-#    ymajorLocator   = MultipleLocator(5)
-#    #ymajorFormatter = FormatStrFormatter('%1.1d')
-#    yminorLocator   = MultipleLocator(1)
-#
-#    ax.xaxis.set_major_locator(xmajorLocator)
-#    #ax.xaxis.set_major_formatter(xmajorFormatter)
-#    ax.yaxis.set_major_locator(ymajorLocator)
-#    #ax.yaxis.set_major_formatter(ymajorFormatter)
-#    ax.xaxis.set_minor_locator(xminorLocator)
-#    ax.yaxis.set_minor_locator(yminorLocator)
-#    ax.xaxis.grid(True, which='major') 
-#    ax.yaxis.grid(True, which='major')
-#    
-#
-#    plt.legend(loc='upper right', bbox_to_anchor=(1.5,0.75),ncol=1,fancybox=True,shadow=True,borderaxespad = 0.)
-#    plt.title("gs(infinite)="+str(gs_converge))
-#    plot_path = 'gs.eps'
-#    plt.ylim((-29,-23))  
-#    plt.xlim((10,50))
-#    plt.subplots_adjust(right = 0.7)
-#    plt.savefig(plot_path)
-#    plt.close('all')
-#    #fig1.show()
-#    
-#    
-#    file_path = "gs_NN_prediction.txt"
-#    with open(file_path,'w') as f_1:
-#        for loop1 in range(1,count):
-#            f_1.write('{:>-10.5f}'.format(y_test[loop1,0]))
-#            f_1.write('{:>10}'.format(x_test[loop1,0]))
-#            f_1.write('{:>10}'.format(x_test[loop1,1])+'\n')
-#    os.system('cp '+file_path+' '+output_path)        
-#    os.system('cp '+model_path+' '+output_path) 
-#    os.system('cp '+'gs.eps'+' '+output_path) 
-#    os.system('cp '+'loss_val_loss.eps'+' '+output_path) 
-##
-## plot different_hw.eps and lowest_each_Nmax.eps
-##
-#    data_num = len(open(file_path,'rU').readlines())
-#    raw_data = np.zeros((data_num,3),dtype = np.float)
-#    input_file_2(file_path,raw_data)
-#    
-#    raw_data_new_4 = raw_data[np.where(raw_data[:,2] == 50 )]
-#    raw_data_new_3 = raw_data[np.where(raw_data[:,2] == 40 )]
-#    raw_data_new_2 = raw_data[np.where(raw_data[:,2] == 30 )]
-#    raw_data_new_1 = raw_data[np.where(raw_data[:,2] == 20 )]
-#    
-#    raw_data_new_5 = raw_data[np.where(raw_data[:,1] == 200)]
-#    temp_1 = raw_data_new_5[:,0]
-#    gs_converge = np.min(temp_1)
-#    
-#    raw_data_new = np.zeros((200,2),dtype = np.float)
-#    for loop in range(0,200):
-#        raw_data_new[loop,1] = loop+4
-#        raw_data_new[loop,0] = np.min(raw_data[np.where(raw_data[:,1]==loop+4)])
-#    
-#    x_list = raw_data_new[:,1]
-#    y_list = np.log10(raw_data_new[:,0] - gs_converge)
-#    
-#    x_list_1 = raw_data_new_1 [:,1]
-#    y_list_1 = np.log10(raw_data_new_1[:,0] - gs_converge)
-#    
-#    x_list_2 = raw_data_new_2 [:,1]
-#    y_list_2 = np.log10(raw_data_new_2[:,0] - gs_converge)
-#    
-#    x_list_3 = raw_data_new_3 [:,1]
-#    y_list_3 = np.log10(raw_data_new_3[:,0] - gs_converge)
-#    
-#    x_list_4 = raw_data_new_4 [:,1]
-#    y_list_4 = np.log10(raw_data_new_4[:,0] - gs_converge)
-#    fig_1 = plt.figure('fig_1')
-#    l1 = plt.scatter(x_list_1,y_list_1,color='k',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=20')
-#    l2 = plt.scatter(x_list_2,y_list_2,color='r',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=30')
-#    l3 = plt.scatter(x_list_3,y_list_3,color='g',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=40')
-#    l4 = plt.scatter(x_list_4,y_list_4,color='b',linestyle='--',s = 10, marker = 'x', label    ='NN_prediction_hw=50')
-#    
-#    plt.title("E(converge)="+str(gs_converge))
-#    
-#    plt.ylabel("lg(E(infinte)-E(converge))")
-#    plt.legend(loc = 'lower left')
-#    #plt.ylim((1.2,2.8))
-#    #plt.savefig('Li6_radius_NN_prediction.jpg')
-#    plot_path = 'different_hw.eps'
-#    plt.savefig(plot_path)
-#    #fig_1.show()
-#    fig_2 = plt.figure('fig_2')
-#    l = plt.scatter(x_list,y_list,color='k',linestyle='--',s = 10, marker = 'x', label='E(infinite)')
-#    
-#    
-#    plt.title("E(converge)="+str(gs_converge))
-#    plt.ylabel("lg(E(infinte)-E(converge))")
-#    plt.legend(loc = 'lower left')
-#    #plt.ylim((1.2,2.8))
-#    #plt.savefig('Li6_radius_NN_prediction.jpg')
-#    plot_path = 'lowest_each_Nmax.eps'
-#    plt.savefig(plot_path)
-#    #fig_2.show()
-#    plt.close('all') 
-#   # import plot_gs as plot
-#    os.system('cp '+'different_hw.eps'+' '+output_path) 
-#    os.system('cp '+'lowest_each_Nmax.eps'+' '+output_path) 
-
-    #print(gs_converge)
-    return variant
+    return variant,max_error,norm_ratio
 
 
 
@@ -732,38 +551,47 @@ val_loss_all = np.zeros(run_times_end)
 
 #for loop1 in range(100):
 loop1 = 3
-max_nmax_fit = 22
-folder_num   = 1
+max_nmax_fit = 20
+folder_num   = 100
 new_pre_gs_variant = np.zeros(folder_num)
-
-for loop1 in range (folder_num):
-
-    model_h5file_path = "/home/slime/work/CC/hw_Nmax_analysis/data_with_different_weight_test/"+nuclei+"/"+target_option+"/gs-nmax4-"+str(max_nmax_fit)+"_new_balance/"+str(loop1+1)+"/gs.h5"
-    active = os.path.exists(model_h5file_path)
-    print active
-    if (active == True ):
-        new_pre_gs_variant[loop1] = NN_uncertainty(model_h5file_path=model_h5file_path,max_nmax_fit=max_nmax_fit,input_dim=input_dim)
-    else:
-        new_pre_gs_variant[loop1] = 0
+max_error = np.zeros(folder_num)
+norm_ratio  = np.zeros(folder_num)
 
 
-mean_variant = 0
-mean_variant_count = 0
-
-for loop1 in range (folder_num):
-    if (new_pre_gs_variant[loop1] != 0):
-        mean_variant = mean_variant +  new_pre_gs_variant[loop1]
-        mean_variant_count = mean_variant_count + 1
-mean_variant = mean_variant / mean_variant_count
-
-
-with open('uncertainty_analysis.txt','w') as f_1:
-    f_1.write('#############################################'+'\n')
-    f_1.write('# loop    new_pre_gs_variant  '+'\n')
+for a in [2,10]:
+    
     for loop1 in range (folder_num):
-        f_1.write("   "+str(loop1+1)+'    '+str(new_pre_gs_variant[loop1])+'\n')
-    f_1.write('#############################################'+'\n')
-    f_1.write('mean_variant = '+str(mean_variant))
+        model_h5file_path = "/home/slime/work/CC/hw_Nmax_analysis/data_with_different_weight_test/"+nuclei+"/"+target_option+"/gs-nmax4-"+str(max_nmax_fit)+"_new_balance/"+str(loop1+1)+"/gs.h5"
+        active = os.path.exists(model_h5file_path)
+        #print active
+        if (active == True ):
+            new_pre_gs_variant[loop1],max_error[loop1],norm_ratio[loop1]   = NN_uncertainty(model_h5file_path=model_h5file_path,max_nmax_fit=max_nmax_fit,input_dim=input_dim,loss_multiple = a)
+        else:
+            new_pre_gs_variant[loop1] = 0
+    
+    
+    mean_variant = 0
+    mean_variant_count = 0
+    mean_max_error = 0
+    mean_norm_ratio = 0
+    
+    
+    for loop1 in range (folder_num):
+        if (new_pre_gs_variant[loop1] != 0):
+            mean_variant = mean_variant +  new_pre_gs_variant[loop1]
+            mean_max_error = mean_max_error + max_error[loop1]        
+            mean_norm_ratio = mean_norm_ratio + norm_ratio[loop1]
+            mean_variant_count = mean_variant_count + 1
+    
+    mean_variant = mean_variant / mean_variant_count
+    mean_max_error = mean_max_error / mean_variant_count
+    mean_norm_ratio = mean_norm_ratio / mean_variant_count
+    
+    with open("/home/slime/work/CC/hw_Nmax_analysis/data_with_different_weight_test/"+nuclei+"/"+target_option+"/gs-nmax4-"+str(max_nmax_fit)+"_new_balance/"+'uncertainty_analysis.txt','a') as f_1:
+        f_1.write('####################################################################################'+'\n')
+        f_1.write('#               mean_variant'+'             mean_max_error'+'             mean_norm_ratio'+'\n')
+        f_1.write('loos a='+str(a)+'    ')
+        f_1.write(str(mean_variant)+'     '+str(mean_max_error)+'        '+str(mean_norm_ratio)+'\n')
 
 
 
