@@ -268,17 +268,72 @@ def NN_uncertainty(model_h5file_path,max_nmax_fit,input_dim,loss_multiple):
         #print "max_y="+str(x_new[loop2,np.where(y_new[loop2,:]==np.min(y_new[loop2,:]))])
         min_position[loop2] = x_new[loop2,np.where(y_new[loop2,:]==np.min(y_new[loop2,:]))]
 
+#
+#  first way of doing gaussian weights
+#
+#    count = 0
+#    for loop2 in range(0,nmax_count):
+#         for loop3 in range(0,interpol_count):
+#             if(sample_weight_switch   == 'on'):
+#                 data_interpolation[count,3] = normfun(x_new[loop2,loop3],min_position[loop2],sigma) 
+#             elif(sample_weight_switch == 'off'):
+#                  data_interpolation[count,3] = 1 
+#             else:
+#                 print('sample_weight_switch error!') 
+#             count = count +1 
 
-    count = 0
+##
+##  second way of doing gussian sample weights, according to the cross point with last Nmax
+##
+# find the cross point of largest nmax with the last but one Nmax
+    x_cross_point = 0 
+    y_cross_point = 0 
+    
+    raw_data_new = raw_data[np.where(raw_data[:,1]==(nmax_max))]
+    line_1_x = raw_data_new[:,2]
+    line_1_y = raw_data_new[:,0]
+    raw_data_new = raw_data[np.where(raw_data[:,1]==(nmax_max-2))]
+    line_2_x = raw_data_new[:,2]
+    line_2_y = raw_data_new[:,0]
+
+#   radius_range is the FWHM 
+    radius_range =np.abs((np.max(line_1_y)-np.min(line_1_y)+np.max(line_1_y)-np.min(line_1_y))/2.)
+
+#  balance x and y
+    regulator = (np.max(line_1_x)-np.min(line_1_x)) / (np.max(line_1_y)-np.min(line_1_y))
+#    print(regulator)
+    temp_min = pow((line_1_x[0]/regulator-line_2_x[0]/regulator),2)+pow(line_1_y[0] - line_2_y[0],2)
+    for loop1 in range(0,len(line_1_x)):
+        for loop2 in range(0,len(line_1_x)):
+            temp = pow((line_1_x[loop1]/regulator-line_2_x[loop2]/regulator),2)+pow(line_1_y[loop1] - line_2_y[loop2],2) 
+            #print("temp="+str(temp))
+            if(temp < temp_min):
+                temp_min = temp
+                x_cross_point = line_1_x[loop1]#(line_1_x[loop1] + line_2_x[loop2])/2.
+                y_cross_point = line_1_y[loop1]#(line_1_y[loop1] + line_2_y[loop2])/2. 
+
+    print ("x_cross_point="+str(x_cross_point))
+    print ("y_cross_point="+str(y_cross_point))
+
+
+
+    count = 0 
     for loop2 in range(0,nmax_count):
          for loop3 in range(0,interpol_count):
              if(sample_weight_switch   == 'on'):
-                 data_interpolation[count,3] = normfun(x_new[loop2,loop3],min_position[loop2],sigma) 
+                 data_interpolation[count,3] = normfun(y_new[loop2,loop3],y_cross_point, radius_range*FWHM_percent ) # gaussian distribute accroding to y_cross_point value
              elif(sample_weight_switch == 'off'):
-                  data_interpolation[count,3] = 1 
+                 data_interpolation[count,3] = 1 
              else:
-                 print('sample_weight_switch error!') 
-             count = count +1 
+                 print('sample_weight_switch error!')
+             count = count +1
+
+
+
+
+
+
+
 #
 #
 #    
@@ -510,7 +565,7 @@ def NN_uncertainty(model_h5file_path,max_nmax_fit,input_dim,loss_multiple):
     #print ("new_pre_gs_variant = "+str(variant))
     #print ("average_ratio = "+str(np.mean(norm_ratio)))
 
-    return variant,max_error,norm_ratio,origin_gs
+    return variant,max_error,norm_ratio,origin_gs,origin_loss
 
 
 
@@ -540,6 +595,8 @@ run_times_end   = 150
 sample_weight_switch = 'on'
 FWHM = 20
 sigma = FWHM/2.355
+FWHM_percent = 0.5
+
 
 x_max = 3
 x_min = 1.8 
@@ -558,7 +615,8 @@ folder_num   = 100
 new_pre_gs_variant = np.zeros(folder_num)
 max_error = np.zeros(folder_num)
 norm_ratio  = np.zeros(folder_num)
-origin_gs          = np.zeros(folder_num)
+origin_gs     = np.zeros(folder_num)
+origin_loss   = np.zeros(folder_num)
 
 for max_nmax_fit in [22]:
     for a in [2,10]:
@@ -568,15 +626,17 @@ for max_nmax_fit in [22]:
             active = os.path.exists(model_h5file_path)
             #print active
             if (active == True ):
-                new_pre_gs_variant[loop1],max_error[loop1],norm_ratio[loop1],origin_gs[loop1] = NN_uncertainty(model_h5file_path=model_h5file_path,max_nmax_fit=max_nmax_fit,input_dim=input_dim,loss_multiple = a)
+                new_pre_gs_variant[loop1],max_error[loop1],norm_ratio[loop1],origin_gs[loop1],origin_loss[loop1] = NN_uncertainty(model_h5file_path=model_h5file_path,max_nmax_fit=max_nmax_fit,input_dim=input_dim,loss_multiple = a)
             else:
                 new_pre_gs_variant[loop1] = 0
-            if ( (origin_gs[loop1]<x_min) | (origin_gs[loop1]>x_max):
+            if ( (origin_gs[loop1]>x_min) & (origin_gs[loop1]<x_max) ):
+                trash = 0
+            else:
                 new_pre_gs_variant[loop1] = 0
 
 
             with open("/home/slime/work/CC/hw_Nmax_analysis/data_with_different_weight_test/"+nuclei+"/"+target_option+"/"+target_option+"-nmax4-"+str(max_nmax_fit)+"_new_balance/"+'uncertainty_analysis.txt','a') as f_1:
-                f_1.write('folder_num='+str(loop1)+'  origin_gs='+str(origin_gs[loop1])+'   variant='+str(new_pre_gs_variant[loop1])+'   max_error='+str(max_error[loop1])+'  norm_ratio='+str(nor_ratio[loop1])+'\n')
+                f_1.write('folder_num='+str(loop1)+'  origin_gs='+str(origin_gs[loop1])+'  origin_loss='+str(origin_loss[loop1])+'  variant='+str(new_pre_gs_variant[loop1])+'   max_error='+str(max_error[loop1])+'  norm_ratio='+str(norm_ratio[loop1])+'\n')
 
 
         mean_variant = 0
