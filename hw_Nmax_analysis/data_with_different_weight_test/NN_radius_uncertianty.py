@@ -2,11 +2,11 @@ import keras
 import numpy as np
 import re
 import os
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import tensorflow as tf
 
 
-from matplotlib.ticker import MultipleLocator, FormatStrFormatter
+#from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 from keras.models import Sequential
 from keras.utils import np_utils
 from keras.layers import Input, Dense, Dropout, Activation
@@ -21,7 +21,7 @@ from keras import layers
 from keras import backend as K
 from keras.engine.topology import Layer
 from keras.layers.core import Lambda
-from compiler.ast import flatten
+#from compiler.ast import flatten
 from random import gauss
 
 
@@ -510,7 +510,7 @@ def NN_uncertainty(model_h5file_path,max_nmax_fit,input_dim,loss_multiple):
     #print ("new_pre_gs_variant = "+str(variant))
     #print ("average_ratio = "+str(np.mean(norm_ratio)))
 
-    return variant,max_error,norm_ratio
+    return variant,max_error,norm_ratio,origin_gs
 
 
 
@@ -518,8 +518,8 @@ def NN_uncertainty(model_h5file_path,max_nmax_fit,input_dim,loss_multiple):
 # all NN parameters
 #
 nuclei = 'Li6'
-target_option = 'gs'
-raw_data_path = 'Li6E_NNLOopt.txt'
+target_option = 'radius'
+raw_data_path = 'Li6R_NNLOopt.txt'
 #output_path = './result/gs/'
 data_num = input_raw_data_count(raw_data_path)
 # earlystopping parameters
@@ -540,7 +540,9 @@ run_times_end   = 150
 sample_weight_switch = 'on'
 FWHM = 20
 sigma = FWHM/2.355
- 
+
+x_max = 3
+x_min = 1.8 
 
 gs_converge_all = np.zeros(run_times_end)
 loss_all = np.zeros(run_times_end)
@@ -551,25 +553,32 @@ val_loss_all = np.zeros(run_times_end)
 
 #for loop1 in range(100):
 loop1 = 3
-max_nmax_fit = 18
+#max_nmax_fit = 18
 folder_num   = 100
 new_pre_gs_variant = np.zeros(folder_num)
 max_error = np.zeros(folder_num)
 norm_ratio  = np.zeros(folder_num)
+origin_gs          = np.zeros(folder_num)
 
-for max_nmax_fit in [14,16,18]:
+for max_nmax_fit in [22]:
     for a in [2,10]:
         for loop1 in range (folder_num):
             print("folder_num = "+str(folder_num))
-            model_h5file_path = "/home/slime/work/CC/hw_Nmax_analysis/data_with_different_weight_test/"+nuclei+"/"+target_option+"/gs-nmax4-"+str(max_nmax_fit)+"_new_balance/"+str(loop1+1)+"/gs.h5"
+            model_h5file_path = "/home/slime/work/CC/hw_Nmax_analysis/data_with_different_weight_test/"+nuclei+"/"+target_option+"/"+target_option+"-nmax4-"+str(max_nmax_fit)+"_new_balance/"+str(loop1+1)+"/gs.h5"
             active = os.path.exists(model_h5file_path)
             #print active
             if (active == True ):
-                new_pre_gs_variant[loop1],max_error[loop1],norm_ratio[loop1]   = NN_uncertainty(model_h5file_path=model_h5file_path,max_nmax_fit=max_nmax_fit,input_dim=input_dim,loss_multiple = a)
+                new_pre_gs_variant[loop1],max_error[loop1],norm_ratio[loop1],origin_gs[loop1] = NN_uncertainty(model_h5file_path=model_h5file_path,max_nmax_fit=max_nmax_fit,input_dim=input_dim,loss_multiple = a)
             else:
                 new_pre_gs_variant[loop1] = 0
-        
-        
+            if ( (origin_gs[loop1]<x_min) | (origin_gs[loop1]>x_max):
+                new_pre_gs_variant[loop1] = 0
+
+
+            with open("/home/slime/work/CC/hw_Nmax_analysis/data_with_different_weight_test/"+nuclei+"/"+target_option+"/"+target_option+"-nmax4-"+str(max_nmax_fit)+"_new_balance/"+'uncertainty_analysis.txt','a') as f_1:
+                f_1.write('folder_num='+str(loop1)+'  origin_gs='+str(origin_gs[loop1])+'   variant='+str(new_pre_gs_variant[loop1])+'   max_error='+str(max_error[loop1])+'  norm_ratio='+str(nor_ratio[loop1])+'\n')
+
+
         mean_variant = 0
         mean_variant_count = 0
         mean_max_error = 0
@@ -587,7 +596,7 @@ for max_nmax_fit in [14,16,18]:
         mean_max_error = mean_max_error / mean_variant_count
         mean_norm_ratio = mean_norm_ratio / mean_variant_count
         
-        with open("/home/slime/work/CC/hw_Nmax_analysis/data_with_different_weight_test/"+nuclei+"/"+target_option+"/gs-nmax4-"+str(max_nmax_fit)+"_new_balance/"+'uncertainty_analysis.txt','a') as f_1:
+        with open("/home/slime/work/CC/hw_Nmax_analysis/data_with_different_weight_test/"+nuclei+"/"+target_option+"/"+target_option+"-nmax4-"+str(max_nmax_fit)+"_new_balance/"+'uncertainty_analysis.txt','a') as f_1:
             f_1.write('####################################################################################'+'\n')
             f_1.write('#               mean_variant'+'             mean_max_error'+'             mean_norm_ratio'+'\n')
             f_1.write('loos a='+str(a)+'    ')
