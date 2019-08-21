@@ -618,7 +618,7 @@ norm_ratio  = np.zeros(folder_num)
 origin_gs     = np.zeros(folder_num)
 origin_loss   = np.zeros(folder_num)
 
-for max_nmax_fit in [22]:
+for max_nmax_fit in [12,14,16]:
     for a in [2,10]:
         for loop1 in range (folder_num):
             print("folder_num = "+str(folder_num))
