@@ -24,7 +24,9 @@ from keras.layers.core import Lambda
 from compiler.ast import flatten
 from random import gauss
 
-
+def sigmoid_mine(x):
+    y = 1/(1+np.exp(-x))
+    return y
 
 def normfun(x,mu,sigma):
     pdf = np.exp(-((x - mu)**2)/(2*sigma**2)) / (sigma * np.sqrt(2*np.pi))
@@ -217,11 +219,103 @@ def model_predict_gs(my_model):
 
     return gs_converge
 
+def model_dropout_predict_gs():
+    #
+    # get model prediction
+    #
+    count = len(range(4,204,1))*len(range(5,121,1))
+    x_test = np.zeros((count,2),dtype = np.float)
+    
+    loop3 = 0
+    for loop1 in range(4,204,1):
+        for loop2 in range(5,121,1):
+            x_test[loop3][0] = loop1 
+            x_test[loop3][1] = loop2 
+            loop3 = loop3 + 1
+    
+    y_test = NN_predict(x_test)
+    raw_predic_data = np.concatenate((y_test,x_test),axis=1)
+    temp = (raw_predic_data[np.where(raw_predic_data[:,1]== 200)])
+    gs_converge = np.min(temp[:,0])
+
+    return gs_converge
+
+def NN_predic(weights,x_in):
+
+    y_out = np.zeros(len(x_in))
+    layer_1_weights = np.zeros((2,8))
+    layer_1_bias    = np.zeros(8)
+    layer_2_weights = np.zeros((8,1))
+    layer_2_bias    = np.zeros(1)
+
+
+    layer_1_weights[0,:] = weights[0:8]
+    layer_1_weights[1,:] = weights[8:16]
+    layer_1_bias    = weights[16:24]
+    layer_2_weights[:,0] = weights[24:32].T
+    layer_2_bias    = weights[32]
+
+
+    a = np.dot(x_in,layer_1_weights) 
+    b = a + layer_1_bias
+    c = sigmoid_mine(b)
+    d = np.dot(c,layer_2_weights)
+    e = d + layer_2_bias
+
+    return e
+
+
+def NN_predic_dropout(weights,x_in,dropout_node):
+
+#  dropout_node = 0-7
+
+    y_out = np.zeros(len(x_in))
+    layer_1_weights = np.zeros((2,7))
+    layer_1_bias    = np.zeros(7)
+    layer_2_weights = np.zeros((7,1))
+    layer_2_bias    = np.zeros(1)
+
+
+    layer_1_weights[0,0:dropout_node] = weights[0:dropout_node]
+    layer_1_weights[0,dropout_node:7] = weights[dropout_node+1:8]
+    layer_1_weights[1,0:dropout_node] = weights[8:dropout_node+8]
+    layer_1_weights[1,dropout_node:7] = weights[dropout_node+8+1:16]
+    layer_1_bias[0:dropout_node]    = weights[16:dropout_node+16]
+    layer_1_bias[dropout_node:7]    = weights[dropout_node+16+1:24]
+
+    layer_2_weights[0:dropout_node,0] = weights[24:dropout_node+24].T
+    layer_2_weights[dropout_node:7,0] = weights[dropout_node+24+1:32].T
+    layer_2_bias    = weights[32]
+
+#
+#    layer_1_bias    = weights[16:24]
+#    layer_2_weights[:,0] = weights[24:32].T
+#    layer_2_bias    = weights[32]
+#
+#
+    a = np.dot(x_in,layer_1_weights) 
+    b = a + layer_1_bias
+    c = sigmoid_mine(b)
+    d = np.dot(c,layer_2_weights)
+    e = d + layer_2_bias
+
+#    print("a="+str(a.shape))
+#    print("b="+str(b.shape))
+#    print("c="+str(c.shape))
+#    print("bias="+str(layer_1_bias))
+#    print("b="+str(b))
+#    print("c="+str(c))
+#    print("e="+str(e))
+
+
+    return e
+
+
 
 
 
 #def NN_all(input_path,output_path,data_num,monitor,min_delta,patience,epochs,input_dim,output_dim,interpol_count,max_nmax_fit,sigma):
-def NN_dropout(model_h5file_path,max_nmax_fit,input_dim,loss_multiple):   
+def NN_dropout(model_h5file_path,max_nmax_fit,input_dim):   
     #
     # Take in all the input data from file
     # 
@@ -411,6 +505,44 @@ def NN_dropout(model_h5file_path,max_nmax_fit,input_dim,loss_multiple):
     for loop6 in range(model_str[2]):
         weights_flat_origin[temp] = weights_unflat_origin[3][loop6] 
         temp = temp + 1
+
+    print(weights_flat_origin)
+
+    origin_gs   = model_predict_gs(my_model)
+    print("origin_gs="+str(origin_gs))
+#
+# new_prediction with one node dropout
+#
+    dropout_gs = np.zeros(8)
+    for loop4 in range(8):
+        count = len(range(4,204,1))*len(range(5,121,1))
+        x_test = np.zeros((count,2),dtype = np.float)
+        
+        loop3 = 0
+        for loop1 in range(4,204,1):
+            for loop2 in range(5,121,1):
+                x_test[loop3][0] = loop1 
+                x_test[loop3][1] = loop2 
+                loop3 = loop3 + 1
+     
+        y_test = NN_predic_dropout(weights=weights_flat_origin,x_in=x_test,dropout_node=loop4)
+        raw_predic_data = np.concatenate((y_test,x_test),axis=1)
+        temp = (raw_predic_data[np.where(raw_predic_data[:,1]== 200)])
+        dropout_gs[loop4] = np.min(temp[:,0])
+
+    dropout_gs_error = np.zeros(8)
+    for loop1 in range(8):
+        dropout_gs_error[loop1] = np.abs(dropout_gs[loop1]-origin_gs)
+
+
+    print('NN_predic_dropout='+str(dropout_gs))
+
+
+
+
+
+
+
  
 #    print(weights)
 #    print(weights_flat_origin)
@@ -441,18 +573,18 @@ def NN_dropout(model_h5file_path,max_nmax_fit,input_dim,loss_multiple):
 
 
 
-    weights_unflat_temp = unflattern_weights(model_str=model_str,weights_new=weights_flat_origin,weights=weights_unflat_origin)    
-    my_model.set_weights(weights_unflat_temp)
-
-    origin_loss = output_loss(my_model=my_model,x_in=x_train,y_in=y_train,sample_weights=raw_data_new[:,3])
- 
-    origin_gs   = model_predict_gs(my_model)
-
-    origin_weights_norm = np.linalg.norm(weights_flat_origin)
-
-    print("origin_loss="+str(origin_loss)) 
-    print("origin_gs="+str(origin_gs))
-    print("origin_weights_norm="+str(origin_weights_norm))
+#    weights_unflat_temp = unflattern_weights(model_str=model_str,weights_new=weights_flat_origin,weights=weights_unflat_origin)    
+#    my_model.set_weights(weights_unflat_temp)
+#
+#    origin_loss = output_loss(my_model=my_model,x_in=x_train,y_in=y_train,sample_weights=raw_data_new[:,3])
+# 
+#    origin_gs   = model_predict_gs(my_model)
+#
+#    origin_weights_norm = np.linalg.norm(weights_flat_origin)
+#
+#    print("origin_loss="+str(origin_loss)) 
+#    print("origin_gs="+str(origin_gs))
+#    print("origin_weights_norm="+str(origin_weights_norm))
 
 
 ##
@@ -478,39 +610,41 @@ def NN_dropout(model_h5file_path,max_nmax_fit,input_dim,loss_multiple):
 #
 # generate random vec 
 #
-    random_vec_num = 100
-    random_vec = np.zeros((len(weights_flat_origin),random_vec_num)) 
-    for loop1 in range(random_vec_num):
-        random_vec[:,loop1]=make_random_vec(len(weights_flat_origin))
-    #print (random_vec)
+#    random_vec_num = 100
+#    random_vec = np.zeros((len(weights_flat_origin),random_vec_num)) 
+#    for loop1 in range(random_vec_num):
+#        random_vec[:,loop1]=make_random_vec(len(weights_flat_origin))
+#    #print (random_vec)
 
 #
 # calculate double loss walk along random vec direction.
 #
-    
-    new_pre_gs_error = np.zeros(random_vec_num)
-    norm_ratio       = np.zeros(random_vec_num)
-    #print("lalal="+str(random_vec[:,1]))
-    
-    model_pre = np.zeros(random_vec_num)
-    for loop1 in range(random_vec_num):
-        model_pre[loop1],new_pre_gs_error[loop1],norm_ratio[loop1] = random_vec_walk_2timeloss(my_model=my_model,model_str=model_str,x_in=x_train,y_in=y_train,sample_weights=raw_data_new[:,3],origin_flat_weights=weights_flat_origin,origin_unflat_weights=weights_unflat_origin,origin_loss=origin_loss,gs_origin=origin_gs,random_vec=random_vec[:,loop1],loss_multiple=loss_multiple)
-    #print ("mean_model_pre_gs_error = "+str(np.mean(model_pre)))
-
-    max_error = np.amax(new_pre_gs_error)
-    norm_ratio = norm_ratio[np.where(new_pre_gs_error[:]==np.amax(new_pre_gs_error))]
-    print ('max_error = '+str(np.amax(max_error))+'   norm_ratio = '+str(norm_ratio))
-
+#    
+#    new_pre_gs_error = np.zeros(random_vec_num)
+#    norm_ratio       = np.zeros(random_vec_num)
+#    #print("lalal="+str(random_vec[:,1]))
+#    
+#    model_pre = np.zeros(random_vec_num)
+#    for loop1 in range(random_vec_num):
+#        model_pre[loop1],new_pre_gs_error[loop1],norm_ratio[loop1] = random_vec_walk_2timeloss(my_model=my_model,model_str=model_str,x_in=x_train,y_in=y_train,sample_weights=raw_data_new[:,3],origin_flat_weights=weights_flat_origin,origin_unflat_weights=weights_unflat_origin,origin_loss=origin_loss,gs_origin=origin_gs,random_vec=random_vec[:,loop1],loss_multiple=loss_multiple)
+#    #print ("mean_model_pre_gs_error = "+str(np.mean(model_pre)))
+#
+#    max_error = np.amax(new_pre_gs_error)
+#    norm_ratio = norm_ratio[np.where(new_pre_gs_error[:]==np.amax(new_pre_gs_error))]
+#    print ('max_error = '+str(np.amax(max_error))+'   norm_ratio = '+str(norm_ratio))
+#
     # calculate the variant of the new predict gs with two times loss
     variant = 0
-    for loop1 in range(random_vec_num):
-        variant = variant + np.square(model_pre[loop1]-origin_gs)        
-    variant = variant / random_vec_num
+    for loop1 in range(8):
+        variant = variant + np.square(dropout_gs[loop1]-origin_gs)        
+    variant = variant / 8
     variant = np.sqrt(variant)
-    #print ("new_pre_gs_variant = "+str(variant))
-    #print ("average_ratio = "+str(np.mean(norm_ratio)))
+    max_error = np.amax(dropout_gs_error)
 
-    return variant,max_error,norm_ratio
+    print("variant="+str(variant))
+    print("max_error="+str(max_error))
+
+    return variant, max_error
 
 
 
@@ -551,60 +685,45 @@ val_loss_all = np.zeros(run_times_end)
 
 #for loop1 in range(100):
 loop1 = 3
-max_nmax_fit = 18
+max_nmax_fit = 22
 folder_num   = 100
 new_pre_gs_variant = np.zeros(folder_num)
 max_error = np.zeros(folder_num)
-norm_ratio  = np.zeros(folder_num)
-
-
-model_h5file_path = "/home/slime/work/CC/hw_Nmax_analysis/data_with_different_weight_test/"+nuclei+"/"+target_option+"/gs-nmax4-"+str(max_nmax_fit)+"_new_balance/"+str(loop1+1)+"/gs.h5"
-active = os.path.exists(model_h5file_path)
-
-if (active == True ):
-    new_pre_gs_variant[loop1],max_error[loop1],norm_ratio[loop1]   = NN_dropout(model_h5file_path=model_h5file_path,max_nmax_fit=max_nmax_fit,input_dim=input_dim,loss_multiple = a)
-else:
-    new_pre_gs_variant[loop1] = 0
 
 
 
 
-#for max_nmax_fit in [22]:
-#    for a in [2,10]:
-#        for loop1 in range (folder_num):
-#            print("folder_num = "+str(folder_num))
-#            model_h5file_path = "/home/slime/work/CC/hw_Nmax_analysis/data_with_different_weight_test/"+nuclei+"/"+target_option+"/gs-nmax4-"+str(max_nmax_fit)+"_new_balance/"+str(loop1+1)+"/gs.h5"
-#            active = os.path.exists(model_h5file_path)
-#            #print active
-#            if (active == True ):
-#                new_pre_gs_variant[loop1],max_error[loop1],norm_ratio[loop1]   = NN_uncertainty(model_h5file_path=model_h5file_path,max_nmax_fit=max_nmax_fit,input_dim=input_dim,loss_multiple = a)
-#            else:
-#                new_pre_gs_variant[loop1] = 0
-#        
-#        
-#        mean_variant = 0
-#        mean_variant_count = 0
-#        mean_max_error = 0
-#        mean_norm_ratio = 0
-#        
-#        
-#        for loop1 in range (folder_num):
-#            if (new_pre_gs_variant[loop1] != 0):
-#                mean_variant = mean_variant +  new_pre_gs_variant[loop1]
-#                mean_max_error = mean_max_error + max_error[loop1]        
-#                mean_norm_ratio = mean_norm_ratio + norm_ratio[loop1]
-#                mean_variant_count = mean_variant_count + 1
-#        
-#        mean_variant = mean_variant / mean_variant_count
-#        mean_max_error = mean_max_error / mean_variant_count
-#        mean_norm_ratio = mean_norm_ratio / mean_variant_count
-#        
-#        with open("/home/slime/work/CC/hw_Nmax_analysis/data_with_different_weight_test/"+nuclei+"/"+target_option+"/gs-nmax4-"+str(max_nmax_fit)+"_new_balance/"+'uncertainty_analysis.txt','a') as f_1:
-#            f_1.write('####################################################################################'+'\n')
-#            f_1.write('#               mean_variant'+'             mean_max_error'+'             mean_norm_ratio'+'\n')
-#            f_1.write('loos a='+str(a)+'    ')
-#            f_1.write(str(mean_variant)+'     '+str(mean_max_error)+'        '+str(mean_norm_ratio)+'\n')
-#
+for max_nmax_fit in [22]:
+    for loop1 in range (folder_num):
+        print("folder_num = "+str(folder_num))
+        model_h5file_path = "/home/slime/work/CC/hw_Nmax_analysis/data_with_different_weight_test/"+nuclei+"/"+target_option+"/gs-nmax4-"+str(max_nmax_fit)+"_new_balance/"+str(loop1+1)+"/gs.h5"
+        active = os.path.exists(model_h5file_path)
+        #print active
+        if (active == True ):
+            new_pre_gs_variant[loop1],max_error[loop1]   = NN_dropout(model_h5file_path=model_h5file_path,max_nmax_fit=max_nmax_fit,input_dim=input_dim)
+        else:
+            new_pre_gs_variant[loop1] = 0
+    
+    
+    mean_variant = 0
+    mean_variant_count = 0
+    mean_max_error = 0
+    
+    
+    for loop1 in range (folder_num):
+        if (new_pre_gs_variant[loop1] != 0):
+            mean_variant = mean_variant +  new_pre_gs_variant[loop1]
+            mean_max_error = mean_max_error + max_error[loop1]        
+            mean_variant_count = mean_variant_count + 1
+    
+    mean_variant = mean_variant / mean_variant_count
+    mean_max_error = mean_max_error / mean_variant_count
+    
+    with open("/home/slime/work/CC/hw_Nmax_analysis/data_with_different_weight_test/"+nuclei+"/"+target_option+"/gs-nmax4-"+str(max_nmax_fit)+"_new_balance/"+'dropout_uncertainty_analysis.txt','a') as f_1:
+        f_1.write('####################################################################################'+'\n')
+        f_1.write('#               mean_variant'+'             mean_max_error'+'\n')
+        f_1.write(str(mean_variant)+'     '+str(mean_max_error)+'        '+'\n')
+
 
 
 
