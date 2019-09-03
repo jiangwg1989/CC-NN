@@ -720,7 +720,7 @@ for max_nmax_fit in [22]:
     mean_variant = mean_variant / mean_variant_count
     mean_max_error = mean_max_error / mean_variant_count
     
-    with open("/home/slime/work/CC/hw_Nmax_analysis/data_with_different_weight_test/"+nuclei+"/"+target_option+"/"+target_option+"-nmax4-"+str(max_nmax_fit)+"_new_balance/"+'uncertainty_analysis.txt','a') as f_1:
+    with open("/home/slime/work/CC/hw_Nmax_analysis/data_with_different_weight_test/"+nuclei+"/"+target_option+"/"+target_option+"-nmax4-"+str(max_nmax_fit)+"_new_balance/"+'dropout_uncertainty_analysis.txt','a') as f_1:
         f_1.write('####################################################################################'+'\n')
         f_1.write('#               mean_variant'+'             mean_max_error'+'\n')
         f_1.write(str(mean_variant)+'     '+str(mean_max_error)+'        '+'\n')

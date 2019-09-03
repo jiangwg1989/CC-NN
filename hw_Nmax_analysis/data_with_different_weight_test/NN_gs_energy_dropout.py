@@ -693,7 +693,7 @@ max_error = np.zeros(folder_num)
 
 
 
-for max_nmax_fit in [22]:
+for max_nmax_fit in [16,18,20]:
     for loop1 in range (folder_num):
         print("folder_num = "+str(folder_num))
         model_h5file_path = "/home/slime/work/CC/hw_Nmax_analysis/data_with_different_weight_test/"+nuclei+"/"+target_option+"/gs-nmax4-"+str(max_nmax_fit)+"_new_balance/"+str(loop1+1)+"/gs.h5"
